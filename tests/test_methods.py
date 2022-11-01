@@ -183,3 +183,4 @@ class TestCases(unittest.TestCase):
 
     def test_mad(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
+        pass
