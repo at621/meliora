@@ -1,0 +1,41 @@
+# Test types are either red_amber_green or hypothesis testing
+
+# Jeffrey's test
+[[TESTS]]
+TEST_NAME = "Jeffrey's test"
+TEST_TYPE = "red_amber_green"
+TEST_FUNCTION = "jeffreys_test"
+
+[[TESTS.HIGH_DEFAULT_PORTFOLIO]]
+RED_ASSESSMENT = {0.1, 'less_or_equal'}
+AMBER_ASSESSMENT = {0.2, 'less_or_equal'}
+GREEN_ASSESSMENT = {0.2, 'higher'}
+
+[[TESTS.LOW_DEFAULT_PORTFOLIO]]
+RED_ASSESSMENT = {0.1, 'less_or_equal'}
+AMBER_ASSESSMENT = {0.2, 'less_or_equal'}
+GREEN_ASSESSMENT = {0.2, 'higher'}
+
+[[TESTS.CUSTOM]]
+RED_ASSESSMENT = {0.1, 'less_or_equal'}
+AMBER_ASSESSMENT = {0.2, 'less_or_equal'}
+GREEN_ASSESSMENT = {0.2, 'higher'}
+
+
+# t-test for the Null hypothesis that estimated LGD is greater than true LGD
+[[TESTS]]
+TEST_NAME = "LGD t-test"
+TEST_TYPE = "hypothesis"
+TEST_FUNCTION = "lgd_t_test"
+
+[[TESTS.HIGH_DEFAULT_PORTFOLIO]]
+P_VALUE = 0.05
+REJECT_H0 = {2.5, 'higher'}
+
+[[TESTS.LOW_DEFAULT_PORTFOLIO]]
+P_VALUE = 0.05
+REJECT_H0 = {2.5, 'higher'}
+
+[[TESTS.CUSTOM]]
+P_VALUE = 0.05
+REJECT_H0 = {2.5, 'higher'}
