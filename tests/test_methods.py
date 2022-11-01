@@ -23,6 +23,10 @@ class TestCases(unittest.TestCase):
         """Load data for testing"""
         return pd.read_csv("./data/test_pd_psi.csv")
 
+    def load_lgd_t_data(self):
+        """Load data for testing"""
+        return pd.read_csv("./data/lgd_t_test.csv")
+
     def test_jeffreys(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
 
@@ -129,7 +133,15 @@ class TestCases(unittest.TestCase):
 
     def test_lgd_t_test(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
-        pass
+        data = self.load_lgd_t_data()
+
+        result = vt.lgd_t_test(data, "predicted_lgd", "realised_lgd", "segment")
+        result_p_values = result['p_value'].sum()
+
+        # Expected results (see R notebook for values)
+        expected = 4.575081449451153
+
+        self.assertAlmostEqual(result_p_values, expected)
 
     def test_migration_matrix_stability(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""

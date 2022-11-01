@@ -1021,7 +1021,7 @@ def loss_capture_ratio(ead, predicted_ratings, realised_outcomes):
     return loss_capture_ratio
 
 
-def bayesian_error_rate(default_flag, prob_default):
+def bayesian_error_rate(df, default_flag, prob_default):
     """
     BER is the proportion of the whole sample that is misclassified
     when the rating system is in optimal use. For a perfect rating model,
@@ -1063,11 +1063,11 @@ def bayesian_error_rate(default_flag, prob_default):
     -0.47140452079103173
     """
 
-    frame = {"default_flag": default_flag, "prob_default": prob_default}
+    # frame = {"default_flag": default_flag, "prob_default": prob_default}
 
-    df = pd.DataFrame(frame)
+    # df = pd.DataFrame(frame)
 
-    fpr, tpr, thresholds = metrics.roc_curve(df["default_flag"], df["prob_default"])
+    fpr, tpr, thresholds = metrics.roc_curve(df[default_flag], df[prob_default])
     roc_curve_df = pd.DataFrame(
         {"c": thresholds, "hit_rate": tpr, "false_alarm_rate": fpr}
     )
@@ -1207,27 +1207,53 @@ def lgd_t_test(df, observed_lgd, expected_lgd, level="portfolio", segment_col=No
 
         for segment in df[segment_col].unique():
             df_segment = df[df[segment_col] == segment]
-            N = df_segment.shape[0]
-            LGD_mean = df_segment[observed_lgd].mean()
-            pred_LGD_mean = df_segment[expected_lgd].mean()
-            lgd_s2 = df_segment[observed_lgd].var()
-            t_stat = (LGD_mean - pred_LGD_mean) / np.sqrt(lgd_s2 / N)
-            p_value = stats.t.sf(np.abs(t_stat), N - 1) * 2
 
-            results.append([segment, N, LGD_mean, pred_LGD_mean, t_stat, p_value])
+            N = len(df_segment)
+            obs_lgd = df_segment[observed_lgd]
+            pred_lgd = df_segment[expected_lgd]
+            error = obs_lgd - pred_lgd
+            mean_error = error.mean()
+            num = np.sqrt(N) * mean_error
+            lgd_s2 = ((error - mean_error) ** 2).sum() / (N - 1)
+            t_stat = num / np.sqrt(lgd_s2)
+            p_value = 1 - t.cdf(t_stat, df=N - 1)
+
+            results.append(
+                [
+                    segment,
+                    N,
+                    obs_lgd.mean(),
+                    pred_lgd.mean(),
+                    lgd_s2,
+                    mean_error,
+                    t_stat,
+                    p_value,
+                ]
+            )
 
     else:
         N = len(df)
-        LGD = df[observed_lgd]
-        pred_LGD = df[expected_lgd]
-        error = LGD - pred_LGD
+        obs_lgd = df[observed_lgd]
+        pred_lgd = df[expected_lgd]
+        error = obs_lgd - pred_lgd
         mean_error = error.mean()
         num = np.sqrt(N) * mean_error
         lgd_s2 = ((error - mean_error) ** 2).sum() / (N - 1)
         t_stat = num / np.sqrt(lgd_s2)
         p_value = 1 - t.cdf(t_stat, df=N - 1)
 
-        results.append([segment, N, LGD_mean, pred_LGD_mean, t_stat, p_value])
+        results.append(
+            [
+                segment,
+                N,
+                obs_lgd.mean(),
+                pred_lgd.mean(),
+                lgd_s2,
+                mean_error,
+                t_stat,
+                p_value,
+            ]
+        )
 
         # from list of lists to dataframe
     results = pd.DataFrame(
@@ -1237,12 +1263,14 @@ def lgd_t_test(df, observed_lgd, expected_lgd, level="portfolio", segment_col=No
             "N",
             "realised_lgd_mean",
             "pred_lgd_mean",
+            "s2",
+            "mean_error",
             "t_stat",
             "p_value",
         ],
     )
 
-    return results
+    return results  # todo: results do not make sense
 
 
 def migration_matrix_stability(df, initial_ratings_col, final_ratings_col):
@@ -1560,3 +1588,51 @@ def pearson_corr(array_1, array_2):
     """
 
     pass
+
+
+def migration_matrices_statistics(df, period_1_ratings, period_2_ratings):
+    """
+    The objective of this validation tool is to analyse the migration of customers across
+    rating grades during the relevant observation period
+    """
+    a = df[period_1_ratings]
+    b = df[period_2_ratings]
+
+    n_ij = pd.crosstab(a, b)
+    p_ij = pd.crosstab(a, b, normalize="index")
+
+    mnormu = 0
+    K = len(set(df["period_1_ratings"]))
+    for i in range(1, K - 1 + 1):
+        for j in range(i + 1, K + 1):
+            c = p_ij.iloc[i - 1 : i, i:].sum(axis=1).values[0]
+        b = n_ij.sum(axis=1).values[i - 1]
+        a = max(i - K, i - 1)
+        mnormu += a * b * c
+
+    mnorml = 0
+    K = len(set(df["period_1_ratings"]))
+    for i in range(2, K + 1):
+        for j in range(1, i - 1 + 1):
+            c = p_ij.iloc[i - 1 : i, i:].sum(axis=1).values[0]
+        b = n_ij.sum(axis=1).values[i - 1]
+        a = max(i - K, i - 1)
+        mnorml += a * b * c
+
+    upper_mwb = 0
+    for i in range(1, K - 1 + 1):
+        for j in range(i + 1, K + 1):
+            upper_mwb += (
+                abs(i - j) * n_ij.sum(axis=1).values[i - 1] * p_ij.iloc[i - 1, j - 1]
+            )
+    upper_mwb = (1 / mnormu) * upper_mwb
+
+    lower_mwb = 0
+    for i in range(2, K + 1):
+        for j in range(1, i - 1 + 1):
+            lower_mwb += (
+                abs(i - j) * n_ij.sum(axis=1).values[i - 1] * p_ij.iloc[i - 1, j - 1]
+            )
+    lower_mwb = (1 / mnorml) * lower_mwb
+
+    return upper_mwb, lower_mwb
