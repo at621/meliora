@@ -132,3 +132,5 @@ dmypy.json
 # other
 notes.txt
 pyproject copy.toml
+testing.ipynb
+parameter_config_test.toml
