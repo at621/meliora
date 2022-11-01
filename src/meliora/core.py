@@ -101,14 +101,30 @@ def binomial_test(data, ratings, default_flag, predicted_pd, alpha_level=0.05):
     """
 
     # Perform plausibility checks
-    assert all(x in data.columns for x in [ratings, default_flag, predicted_pd]), "Missing columns"
-    assert all(x in [0, False, 1, True] for x in data[default_flag]), "Default flag can have only value 0 and 1"
+    assert all(
+        x in data.columns for x in [ratings, default_flag, predicted_pd]
+    ), "Missing columns"
+    assert all(
+        x in [0, False, 1, True] for x in data[default_flag]
+    ), "Default flag can have only value 0 and 1"
     assert len(data[ratings].unique()) < 40, "Number of PD ratings is excessive"
-    assert all(x >= 0 and x <= 1 for x in data[predicted_pd]), "Predicted PDs must be between 0% and 100%"
+    assert all(
+        x >= 0 and x <= 1 for x in data[predicted_pd]
+    ), "Predicted PDs must be between 0% and 100%"
 
     # Transform input data into the required format
-    df = data.groupby(ratings).agg({predicted_pd: "mean", default_flag: ["count", "sum", "mean"]}).reset_index()
-    df.columns = ["Rating class", "Predicted PD", "Total count", "Defaults", "Actual Default Rate"]
+    df = (
+        data.groupby(ratings)
+        .agg({predicted_pd: "mean", default_flag: ["count", "sum", "mean"]})
+        .reset_index()
+    )
+    df.columns = [
+        "Rating class",
+        "Predicted PD",
+        "Total count",
+        "Defaults",
+        "Actual Default Rate",
+    ]
 
     # Calculate Binomial test outcome for each rating
     df["p_value"] = _binomial(df["Predicted PD"], df["Defaults"], df["Total count"])
@@ -204,13 +220,21 @@ def brier_score(data, ratings, default_flag, predicted_pd):
     """
 
     # Perform plausibility checks
-    assert all(x in data.columns for x in [ratings, default_flag, predicted_pd]), "Not all columns are present"
-    assert all(x in [0, False, 1, True] for x in data[default_flag]), "Default flag can have only value 0 and 1"
+    assert all(
+        x in data.columns for x in [ratings, default_flag, predicted_pd]
+    ), "Not all columns are present"
+    assert all(
+        x in [0, False, 1, True] for x in data[default_flag]
+    ), "Default flag can have only value 0 and 1"
     assert len(data[ratings].unique()) < 40, "Number of PD ratings is excessive"
-    assert all(x >= 0 and x <= 1 for x in data[predicted_pd]), "Predicted PDs must be between 0% and 100%"
+    assert all(
+        x >= 0 and x <= 1 for x in data[predicted_pd]
+    ), "Predicted PDs must be between 0% and 100%"
 
     # Transform input data into the required format
-    df = data.groupby(ratings).agg({predicted_pd: "mean", default_flag: ["count", "sum", "mean"]})
+    df = data.groupby(ratings).agg(
+        {predicted_pd: "mean", default_flag: ["count", "sum", "mean"]}
+    )
     df.columns = ["PD", "N", "D", "Default Rate"]
 
     # Calculate Brier score for the dataset
@@ -316,8 +340,12 @@ def herfindahl_multiple_period_test(data1, data2, ratings, alpha_level=0.05):
     """
 
     # Perform plausibility checks
-    assert ratings in data1.columns and ratings in data2.columns, f"Ratings column {ratings} not found"
-    assert max(len(data1[ratings].unique()), len(data2[ratings].unique())) < 40, "Number of PD ratings is excessive"
+    assert (
+        ratings in data1.columns and ratings in data2.columns
+    ), f"Ratings column {ratings} not found"
+    assert (
+        max(len(data1[ratings].unique()), len(data2[ratings].unique())) < 40
+    ), "Number of PD ratings is excessive"
 
     # Transform input data into the required format
     df1 = pd.DataFrame({"N_initial": data1[ratings].value_counts()})
@@ -469,7 +497,9 @@ def _hosmer(p, d, n):
     # p_value = 1 - chi2.cdf(chisq_stat, len(p) - 2)
 
     kr = sum((d - p * n) ** 2 / (n * p * (1 - p)))  # todo: treatment of missing values
-    p_value = 1 - chi2.cdf(kr, len(p))  # todo: p.val <- pchisq(q = hl, df = k, lower.tail = FALSE)
+    p_value = 1 - chi2.cdf(
+        kr, len(p)
+    )  # todo: p.val <- pchisq(q = hl, df = k, lower.tail = FALSE)
 
     return p_value
 
@@ -542,13 +572,21 @@ def hosmer_test(data, ratings, default_flag, predicted_pd, alpha_level=0.05):
     """
 
     # Perform plausibility checks
-    assert all(x in data.columns for x in [ratings, default_flag, predicted_pd]), "Not all columns are present"
-    assert all(x in [0, False, 1, True] for x in data[default_flag]), "Default flag can have only value 0 and 1"
+    assert all(
+        x in data.columns for x in [ratings, default_flag, predicted_pd]
+    ), "Not all columns are present"
+    assert all(
+        x in [0, False, 1, True] for x in data[default_flag]
+    ), "Default flag can have only value 0 and 1"
     assert len(data[ratings].unique()) < 40, "Number of PD ratings is excessive"
-    assert all(x >= 0 and x <= 1 for x in data[predicted_pd]), "Predicted PDs must be between 0% and 100%"
+    assert all(
+        x >= 0 and x <= 1 for x in data[predicted_pd]
+    ), "Predicted PDs must be between 0% and 100%"
 
     # Transform input data into the required format
-    df = data.groupby(ratings).agg({predicted_pd: "mean", default_flag: ["count", "sum", "mean"]})
+    df = data.groupby(ratings).agg(
+        {predicted_pd: "mean", default_flag: ["count", "sum", "mean"]}
+    )
     df.columns = ["PD", "N", "D", "Default Rate"]
 
     # Calculate Hosmer-Lemeshow test's p-value for the dataset
@@ -589,7 +627,8 @@ def _spiegelhalter(realised_values, predicted_values, alpha_level=0.05):
     # # Calculate null expectation and variance of MSE
     expectations = sum(predicted_values * (1 - predicted_values)) / len(realised_values)
     variances = (
-        sum(predicted_values * (1 - 2 * predicted_values) ** 2 * (1 - predicted_values)) / len(realised_values) ** 2
+        sum(predicted_values * (1 - 2 * predicted_values) ** 2 * (1 - predicted_values))
+        / len(realised_values) ** 2
     )
 
     # Calculate standardized statistic
@@ -667,13 +706,21 @@ def spiegelhalter_test(data, ratings, default_flag, predicted_pd, alpha_level=0.
     """
 
     # Perform plausibility checks
-    assert all(x in data.columns for x in [ratings, default_flag, predicted_pd]), "Not all columns are present"
-    assert all(x in [0, False, 1, True] for x in data[default_flag]), "Default flag can have only value 0 and 1"
+    assert all(
+        x in data.columns for x in [ratings, default_flag, predicted_pd]
+    ), "Not all columns are present"
+    assert all(
+        x in [0, False, 1, True] for x in data[default_flag]
+    ), "Default flag can have only value 0 and 1"
     assert len(data[ratings].unique()) < 40, "Number of PD ratings is excessive"
-    assert all(x >= 0 and x <= 1 for x in data[predicted_pd]), "Predicted PDs must be between 0% and 100%"
+    assert all(
+        x >= 0 and x <= 1 for x in data[predicted_pd]
+    ), "Predicted PDs must be between 0% and 100%"
 
     # Transform input data into the required format
-    df = data.groupby(ratings).agg({predicted_pd: "mean", default_flag: ["count", "sum", "mean"]})
+    df = data.groupby(ratings).agg(
+        {predicted_pd: "mean", default_flag: ["count", "sum", "mean"]}
+    )
     df.columns = ["PD", "N", "D", "Default Rate"]
 
     # Calculate Spiegelhalter test's p-value for the dataset
@@ -778,14 +825,30 @@ def jeffreys_test(data, ratings, default_flag, predicted_pd, alpha_level=0.05):
     """
 
     # Perform plausibility checks
-    assert all(x in data.columns for x in [ratings, default_flag, predicted_pd]), "Not all columns are present"
-    assert all(x in [0, False, 1, True] for x in data[default_flag]), "Default flag can have only value 0 and 1"
+    assert all(
+        x in data.columns for x in [ratings, default_flag, predicted_pd]
+    ), "Not all columns are present"
+    assert all(
+        x in [0, False, 1, True] for x in data[default_flag]
+    ), "Default flag can have only value 0 and 1"
     assert len(data[ratings].unique()) < 40, "Number of PD ratings is excessive"
-    assert all(x >= 0 and x <= 1 for x in data[predicted_pd]), "Predicted PDs must be between 0% and 100%"
+    assert all(
+        x >= 0 and x <= 1 for x in data[predicted_pd]
+    ), "Predicted PDs must be between 0% and 100%"
 
     # Transform input data into the required format
-    df = data.groupby(ratings).agg({predicted_pd: "mean", default_flag: ["count", "sum", "mean"]}).reset_index()
-    df.columns = ["Rating class", "Predicted PD", "Total count", "Defaults", "Actual Default Rate"]
+    df = (
+        data.groupby(ratings)
+        .agg({predicted_pd: "mean", default_flag: ["count", "sum", "mean"]})
+        .reset_index()
+    )
+    df.columns = [
+        "Rating class",
+        "Predicted PD",
+        "Total count",
+        "Defaults",
+        "Actual Default Rate",
+    ]
 
     # Calculate Binomial test outcome for each rating
     df["p_value"] = _jeffreys(df["Predicted PD"], df["Defaults"], df["Total count"])
@@ -820,8 +883,12 @@ def roc_auc(df, target, prediction):
     """
 
     # Perform plausibility checks
-    assert all(x >= 0 and x <= 1 for x in df[target]), "Predicted PDs must be between 0% and 100%"
-    assert all(x >= 0 and x <= 1 for x in df[prediction]), "Predicted PDs must be between 0% and 100%"
+    assert all(
+        x >= 0 and x <= 1 for x in df[target]
+    ), "Predicted PDs must be between 0% and 100%"
+    assert all(
+        x >= 0 and x <= 1 for x in df[prediction]
+    ), "Predicted PDs must be between 0% and 100%"
 
     return roc_auc_score(df[target], df[prediction])
 
@@ -862,9 +929,13 @@ def clar(df, predicted_ratings, realised_outcomes):
 
     for i, j in enumerate(list(set(df[predicted_ratings]))[::-1]):
         x = (df[predicted_ratings] == j).sum()
-        x_bucket = df.sort_values(by=realised_outcomes, ascending=False)[x_s[i]: x_s[i] + x]
+        x_bucket = df.sort_values(by=realised_outcomes, ascending=False)[
+            x_s[i] : x_s[i] + x
+        ]
         x_value = x / len(df)
-        y_value = (x_bucket[realised_outcomes] == j).sum() / len((x_bucket[realised_outcomes] == j))
+        y_value = (x_bucket[realised_outcomes] == j).sum() / len(
+            (x_bucket[realised_outcomes] == j)
+        )
         x_values.append(x_value)
         y_values.append(y_value)
         x_s.append(x + 1)
@@ -917,7 +988,11 @@ def loss_capture_ratio(ead, predicted_ratings, realised_outcomes):
     """
 
     # Create a dataframe
-    frame = {"ead": ead, "predicted_ratings": predicted_ratings, "realised_outcomes": realised_outcomes}
+    frame = {
+        "ead": ead,
+        "predicted_ratings": predicted_ratings,
+        "realised_outcomes": realised_outcomes,
+    }
     df = pd.DataFrame(frame)
 
     # Prepare data
@@ -927,14 +1002,18 @@ def loss_capture_ratio(ead, predicted_ratings, realised_outcomes):
     df2 = df.sort_values(by="predicted_ratings", ascending=False)
     df2["cumulative_loss"] = df2.cumsum()["loss"]
     df2["cumulative_loss_capture_percentage"] = df2.cumsum()["loss"] / df2.loss.sum()
-    auc_curve1 = auc([i for i in range(len(df2))], df2.cumulative_loss_capture_percentage)
+    auc_curve1 = auc(
+        [i for i in range(len(df2))], df2.cumulative_loss_capture_percentage
+    )
     random_auc1 = 0.5 * len(df2) * 1
 
     # Ideal loss capture curve
     df3 = df.sort_values(by="realised_outcomes", ascending=False)
     df3["cumulative_loss"] = df3.cumsum()["loss"]
     df3["cumulative_loss_capture_percentage"] = df3.cumsum()["loss"] / df3.loss.sum()
-    auc_curve2 = auc([i for i in range(len(df3))], df3.cumulative_loss_capture_percentage)
+    auc_curve2 = auc(
+        [i for i in range(len(df3))], df3.cumulative_loss_capture_percentage
+    )
     random_auc2 = 0.5 * len(df3) * 1
 
     loss_capture_ratio = (auc_curve1 - random_auc1) / (auc_curve2 - random_auc2)
@@ -989,11 +1068,15 @@ def bayesian_error_rate(default_flag, prob_default):
     df = pd.DataFrame(frame)
 
     fpr, tpr, thresholds = metrics.roc_curve(df["default_flag"], df["prob_default"])
-    roc_curve_df = pd.DataFrame({"c": thresholds, "hit_rate": tpr, "false_alarm_rate": fpr})
+    roc_curve_df = pd.DataFrame(
+        {"c": thresholds, "hit_rate": tpr, "false_alarm_rate": fpr}
+    )
 
     p_d = df.default_flag.sum() / len(df)
 
-    roc_curve_df["ber"] = p_d * (1 - roc_curve_df.hit_rate) + (1 - p_d) * roc_curve_df.false_alarm_rate
+    roc_curve_df["ber"] = (
+        p_d * (1 - roc_curve_df.hit_rate) + (1 - p_d) * roc_curve_df.false_alarm_rate
+    )
 
     return round(min(roc_curve_df["ber"]), 3)
 
@@ -1054,7 +1137,9 @@ def calc_iv(df, feature, target, pr=0):
 
     data["Share"] = data["All"] / data["All"].sum()
     data["Bad Rate"] = data["Bad"] / data["All"]
-    data["Distribution Good"] = (data["All"] - data["Bad"]) / (data["All"].sum() - data["Bad"].sum())
+    data["Distribution Good"] = (data["All"] - data["Bad"]) / (
+        data["All"].sum() - data["Bad"].sum()
+    )
     data["Distribution Bad"] = data["Bad"] / data["Bad"].sum()
     data["WoE"] = np.log(data["Distribution Good"] / data["Distribution Bad"])
     data["IV"] = data["WoE"] * (data["Distribution Good"] - data["Distribution Bad"])
@@ -1065,7 +1150,7 @@ def calc_iv(df, feature, target, pr=0):
     return data, iv
 
 
-def lgd_t_test(df, observed_LGD_col, expected_LGD_col, verbose=False):
+def lgd_t_test(df, observed_lgd, expected_lgd, level="portfolio", segment_col=None):
     """t-test for the Null hypothesis that estimated LGD is greater than true LGD
     Parameters
     ----------
@@ -1075,6 +1160,8 @@ def lgd_t_test(df, observed_LGD_col, expected_LGD_col, verbose=False):
         name of column with observed LGD values
     expected_LGD_col: string
         name of column with expected LGD values
+    level: string
+        'portfolio' (single comparison) or 'segment' level (multiple comparisons)
     verbose: boolean
         if true, results and interpretation are printed
     Returns
@@ -1104,51 +1191,58 @@ def lgd_t_test(df, observed_LGD_col, expected_LGD_col, verbose=False):
     # Checking for any missing data
     if df.empty:
         raise TypeError("No data provided!")
-    if observed_LGD_col is None:
+    if observed_lgd is None:
         raise TypeError("No column name for observed LGDs provided")
-    if expected_LGD_col is None:
+    if expected_lgd is None:
         raise TypeError("No column name for expected LGDs provided")
 
-    # Checking that the correct datatype
-    if not isinstance(observed_LGD_col, str):
-        raise TypeError("observed_LGD_col not of type string")
-    if not isinstance(expected_LGD_col, str):
-        raise TypeError("expected_LGD_col not of type string")
-
-    # Check if the correct column names have been provided
-    if observed_LGD_col not in df.columns:
-        raise ValueError("{} not a column in the df".format(observed_LGD_col))
-    if expected_LGD_col not in df.columns:
-        raise ValueError("{} not a column in the df".format(expected_LGD_col))
-
     # Check the data for missing values
-    if df[observed_LGD_col].hasnans:
-        raise ValueError("Missing values in {}".format(observed_LGD_col))
-    if df[expected_LGD_col].hasnans:
-        raise ValueError("Missing values in {}".format(expected_LGD_col))
+    if df[observed_lgd].hasnans:
+        raise ValueError("Missing values in {}".format(observed_lgd))
+    if df[expected_lgd].hasnans:
+        raise ValueError("Missing values in {}".format(expected_lgd))
 
-    N = len(df)
-    LGD = df[observed_LGD_col]
-    pred_LGD = df[expected_LGD_col]
-    error = LGD - pred_LGD
-    mean_error = error.mean()
-    num = np.sqrt(N) * mean_error
-    lgd_s2 = ((error - mean_error) ** 2).sum() / (N - 1)
-    t_stat = num / np.sqrt(lgd_s2)
-    p_value = 1 - t.cdf(t_stat, df=N - 1)
+    if level == "segment":
+        results = []
 
-    if verbose is True:
-        # print the results
-        print(
-            "t_stat=%.3f, LGD.mean=%.3f,pred_LGD.mean=%.3f,N=%d, s2=%.3f, p=%.3f"
-            % (t_stat, pred_LGD.mean(), LGD.mean(), N, lgd_s2, p_value)
-        )
-        if p_value <= 0.05:
-            print("P-value <= 5%, therefore, H0 is rejected.")
-        elif p_value > 0.05:
-            print("P-value > 5%, therefore, H0 fails to be rejected.")
+        for segment in df[segment_col].unique():
+            df_segment = df[df[segment_col] == segment]
+            N = df_segment.shape[0]
+            LGD_mean = df_segment[observed_lgd].mean()
+            pred_LGD_mean = df_segment[expected_lgd].mean()
+            lgd_s2 = df_segment[observed_lgd].var()
+            t_stat = (LGD_mean - pred_LGD_mean) / np.sqrt(lgd_s2 / N)
+            p_value = stats.t.sf(np.abs(t_stat), N - 1) * 2
 
-    return N, LGD.mean(), pred_LGD.mean(), t_stat, lgd_s2, p_value
+            results.append([segment, N, LGD_mean, pred_LGD_mean, t_stat, p_value])
+
+    else:
+        N = len(df)
+        LGD = df[observed_lgd]
+        pred_LGD = df[expected_lgd]
+        error = LGD - pred_LGD
+        mean_error = error.mean()
+        num = np.sqrt(N) * mean_error
+        lgd_s2 = ((error - mean_error) ** 2).sum() / (N - 1)
+        t_stat = num / np.sqrt(lgd_s2)
+        p_value = 1 - t.cdf(t_stat, df=N - 1)
+
+        results.append([segment, N, LGD_mean, pred_LGD_mean, t_stat, p_value])
+
+        # from list of lists to dataframe
+    results = pd.DataFrame(
+        results,
+        columns=[
+            "segment",
+            "N",
+            "realised_lgd_mean",
+            "pred_lgd_mean",
+            "t_stat",
+            "p_value",
+        ],
+    )
+
+    return results
 
 
 def migration_matrix_stability(df, initial_ratings_col, final_ratings_col):
@@ -1194,7 +1288,9 @@ def migration_matrix_stability(df, initial_ratings_col, final_ratings_col):
 
                 num = p_ij.iloc[i - 1, j - 1 + 1] - p_ij.iloc[i - 1, j - 1]
                 den_a = p_ij.iloc[i - 1, j - 1] * (1 - p_ij.iloc[i - 1, j - 1]) / Ni
-                den_b = p_ij.iloc[i - 1, j - 1 + 1] * (1 - p_ij.iloc[i - 1, j - 1 + 1]) / Ni
+                den_b = (
+                    p_ij.iloc[i - 1, j - 1 + 1] * (1 - p_ij.iloc[i - 1, j - 1 + 1]) / Ni
+                )
                 den_c = 2 * p_ij.iloc[i - 1, j - 1] * p_ij.iloc[i - 1, j - 1 + 1] / Ni
 
                 z_ij = num / np.sqrt(den_a + den_b + den_c)
@@ -1204,7 +1300,9 @@ def migration_matrix_stability(df, initial_ratings_col, final_ratings_col):
 
                 num = p_ij.iloc[i - 1, j - 1 - 1] - p_ij.iloc[i - 1, j - 1]
                 den_a = p_ij.iloc[i - 1, j - 1] * (1 - p_ij.iloc[i - 1, j - 1]) / Ni
-                den_b = p_ij.iloc[i - 1, j - 1 - 1] * (1 - p_ij.iloc[i - 1, j - 1 - 1]) / Ni
+                den_b = (
+                    p_ij.iloc[i - 1, j - 1 - 1] * (1 - p_ij.iloc[i - 1, j - 1 - 1]) / Ni
+                )
                 den_c = 2 * p_ij.iloc[i - 1, j - 1] * p_ij.iloc[i - 1, j - 1 - 1] / Ni
 
                 z_ij = num / np.sqrt(den_a + den_b + den_c)
