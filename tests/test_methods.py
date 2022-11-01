@@ -180,3 +180,6 @@ class TestCases(unittest.TestCase):
         expected = 0.03030651
 
         self.assertAlmostEqual(tau, expected)
+
+    def test_mad(self):
+        """Expected value calculation is described in the r_test_cases.ipynb"""
