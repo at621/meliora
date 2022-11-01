@@ -1,0 +1,11 @@
+.sig-prename.descclassname .pre {
+    display: none;
+}
+
+li.wy-breadcrumbs-aside {
+    display: none;
+}
+
+li.wy-breadcrumbs-aside .fa.fa-github {
+    display: none;
+}
