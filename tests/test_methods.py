@@ -121,7 +121,7 @@ class TestCases(unittest.TestCase):
         """Expected value calculation is described in the r_test_cases.ipynb"""
         pass
 
-    def test_calc_iv(self):
+    def test_information_value(self):
         """Information calculation is described in the r_test_cases.ipynb"""
         data = self.load_german_data()
         result = vt.calc_iv(data, "checkingstatus", "GoodCredit")

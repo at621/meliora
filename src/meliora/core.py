@@ -9,6 +9,7 @@ from sklearn.metrics import auc
 from sklearn import metrics
 from scipy.stats import t
 from scipy import stats
+from scipy.stats import ks_2samp
 
 
 def _binomial(p, d, n):
@@ -857,7 +858,7 @@ def jeffreys_test(data, ratings, default_flag, predicted_pd, alpha_level=0.05):
     return df
 
 
-def roc_auc(df, target, prediction):
+def roc_auc(data, target, prediction):
     """Compute Area ROC AUC from prediction scores.
 
     Note: this implementation can be used with binary, multiclass and
@@ -884,13 +885,50 @@ def roc_auc(df, target, prediction):
 
     # Perform plausibility checks
     assert all(
+        x >= 0 and x <= 1 for x in data[target]
+    ), "Predicted PDs must be between 0% and 100%"
+    assert all(
+        x >= 0 and x <= 1 for x in data[prediction]
+    ), "Predicted PDs must be between 0% and 100%"
+
+    return roc_auc_score(data[target], data[prediction])
+
+
+def gini(df, target, prediction):
+    """Compute Area ROC AUC from prediction scores.
+
+    todo
+    """
+
+    # Perform plausibility checks
+    assert all(
         x >= 0 and x <= 1 for x in df[target]
     ), "Predicted PDs must be between 0% and 100%"
     assert all(
         x >= 0 and x <= 1 for x in df[prediction]
     ), "Predicted PDs must be between 0% and 100%"
 
-    return roc_auc_score(df[target], df[prediction])
+    roc = roc_auc(df, target, prediction)
+
+    return roc * 2 - 1
+
+
+def ks_stat(df, target, prediction):
+    """Compute Area ROC AUC from prediction scores.
+    todo
+    """
+
+    # Perform plausibility checks
+    assert all(
+        x >= 0 and x <= 1 for x in df[target]
+    ), "Predicted PDs must be between 0% and 100%"
+    assert all(
+        x >= 0 and x <= 1 for x in df[prediction]
+    ), "Predicted PDs must be between 0% and 100%"
+
+    result = ks_2samp(df[target], df[prediction])
+
+    return result
 
 
 def clar(df, predicted_ratings, realised_outcomes):
@@ -1031,7 +1069,7 @@ def bayesian_error_rate(df, default_flag, prob_default):
     The Bayesian error rate specifies the minimum probability of error if
     the rating system or score function under consideration is used for a
     yes/no decision whether a borrower will default or not. The error can
-    be estimated parametrically, e.g. assuming normal score distributions,
+    be estimated parametrically, e.g. assuming noFrmal score distributions,
     or non-parametrically, for instance with kernel density estimation methods.
     If parametric estimation is applied, the distributional assumptions have
     to be carefully checked. Non-parametric estimation will be critical if
@@ -1081,7 +1119,7 @@ def bayesian_error_rate(df, default_flag, prob_default):
     return round(min(roc_curve_df["ber"]), 3)
 
 
-def calc_iv(df, feature, target, pr=0):
+def information_value(df, feature, target, pr=0):
     """
     A numerical value that quantifies the predictive power of an independent
     variable in capturing the binary dependent variable.
@@ -1636,3 +1674,90 @@ def migration_matrices_statistics(df, period_1_ratings, period_2_ratings):
     lower_mwb = (1 / mnorml) * lower_mwb
 
     return upper_mwb, lower_mwb
+
+
+def _entropy(data, realised_pd, count):
+    """
+    CIER measures the ratio of distance between Unconditional and Conditional Entropy to
+    Unconditional Entropy.
+    """
+
+    # prepare data
+    data["perc"] = data[count] / data[count].sum()
+
+    # unconditional entropy
+    pd = (data[count] * data[realised_pd]).sum() / data[count].sum()
+
+    # Unconditional entropy
+    h0 = -(pd * np.log(pd) + (1 - pd) * np.log(1 - pd))
+
+    # Conditional entropy
+    data["hc"] = -(
+        data[realised_pd] * np.log(data[realised_pd])
+        + (1 - data[realised_pd]) * np.log(1 - data[realised_pd])
+    )
+    h1 = sum(data["perc"] * data["hc"])
+
+    return h0, h1
+
+
+def cier(data, rating, realised_pd, count):
+    """CIER measures the ratio of distance between Unconditional and
+    Conditional Entropy to Unconditional Entropy."""
+
+    h0, h1 = _entropy(data, realised_pd, count)
+
+    return (h0 - h1) / h0
+
+
+def kullback_leibler_dist(data, rating, realised_pd, count):
+    """CIER measures the ratio of distance between Unconditional and
+    Conditional Entropy to Unconditional Entropy."""
+
+    h0, h1 = _entropy(data, realised_pd, count)
+
+    return h0 - h1
+
+
+def loss_shortfall(data, ead, predicted_lgd, realised_lgd):
+    """
+    Loss Shortfall is a measure of the difference between the expected loss and the
+    realised loss. It is a measure of the loss that would have been incurred if the
+    actual losses were equal to the expected losses.
+    """
+
+    estimated_losses = data[ead] * data[predicted_lgd]
+    realised_losses = data[ead] * data[realised_lgd]
+
+    return 1 - estimated_losses.sum() / realised_losses.sum()
+
+
+def mean_absolute_deviation(data, ead, predicted_lgd, realised_lgd):
+    """
+    Mean Absolute Deviation is a measure of the difference between the expected loss and
+    the realised loss. It is a measure of the loss that would have been incurred if the
+    actual losses were equal to the expected losses.
+    """
+
+    return (
+        np.sum(np.abs(data[realised_lgd] - data[predicted_lgd]) * data[ead])
+        / data[ead].sum()
+    )
+
+
+def elbe_t_test(df, lgd, elbe):
+    """
+    # df should contain the facilities for which backtesting will be performed.
+    # LGD is the observed LGD, ELBE is the ELBE for each facility, dataframe 
+    # columns should be defined in this manner
+    """
+
+    N = len(df)
+    error = df[lgd] - df[elbe]
+    mean_error = error.mean()
+    num = np.sqrt(N) * mean_error
+    s2 = (((df[lgd] - df[elbe]) - mean_error) ** 2).sum() / (N - 1)
+    t_stat = num / np.sqrt(s2)
+    p_value = 2 * (1 - t.cdf(abs(t_stat), df=N - 1))
+
+    return N, df[lgd].mean(), df[elbe].mean(), t_stat, s2, p_value
