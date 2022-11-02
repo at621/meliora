@@ -968,7 +968,7 @@ def clar(df, predicted_ratings, realised_outcomes):
     for i, j in enumerate(list(set(df[predicted_ratings]))[::-1]):
         x = (df[predicted_ratings] == j).sum()
         x_bucket = df.sort_values(by=realised_outcomes, ascending=False)[
-            x_s[i] : x_s[i] + x
+            x_s[i]: x_s[i] + x
         ]
         x_value = x / len(df)
         y_value = (x_bucket[realised_outcomes] == j).sum() / len(
@@ -1643,7 +1643,7 @@ def migration_matrices_statistics(df, period_1_ratings, period_2_ratings):
     K = len(set(df["period_1_ratings"]))
     for i in range(1, K - 1 + 1):
         for j in range(i + 1, K + 1):
-            c = p_ij.iloc[i - 1 : i, i:].sum(axis=1).values[0]
+            c = p_ij.iloc[i - 1: i, i:].sum(axis=1).values[0]
         b = n_ij.sum(axis=1).values[i - 1]
         a = max(i - K, i - 1)
         mnormu += a * b * c
@@ -1652,7 +1652,7 @@ def migration_matrices_statistics(df, period_1_ratings, period_2_ratings):
     K = len(set(df["period_1_ratings"]))
     for i in range(2, K + 1):
         for j in range(1, i - 1 + 1):
-            c = p_ij.iloc[i - 1 : i, i:].sum(axis=1).values[0]
+            c = p_ij.iloc[i - 1: i, i:].sum(axis=1).values[0]
         b = n_ij.sum(axis=1).values[i - 1]
         a = max(i - K, i - 1)
         mnorml += a * b * c
