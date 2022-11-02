@@ -1748,7 +1748,7 @@ def mean_absolute_deviation(data, ead, predicted_lgd, realised_lgd):
 def elbe_t_test(df, lgd, elbe):
     """
     # df should contain the facilities for which backtesting will be performed.
-    # LGD is the observed LGD, ELBE is the ELBE for each facility, dataframe 
+    # LGD is the observed LGD, ELBE is the ELBE for each facility, dataframe
     # columns should be defined in this manner
     """
 
@@ -1761,3 +1761,47 @@ def elbe_t_test(df, lgd, elbe):
     p_value = 2 * (1 - t.cdf(abs(t_stat), df=N - 1))
 
     return N, df[lgd].mean(), df[elbe].mean(), t_stat, s2, p_value
+
+
+def normal_test(predicted_pd, realised_pd, alpha=0.05):
+    """
+    - Numeric vector of calibrated probabilities of default (PD).
+    - Numeric vector of observed default rates.
+    - alpha Significance level of p-value for implemented tests
+
+    The Normality test is a test of the null hypothesis that the residuals of a
+    regression are normally distributed.
+
+    The normal test is an approach to deal with the dependence problem that occurs in
+    the case of the binomial and chi-square tests. The normal test is a multi-period
+    test of correctness of a default probability forecast for a single rating category.
+
+    It is applied under the assumption that the mean default rate does not vary too
+    much over time and that default events in different years are independent. The
+    normal test is motivated by the Central Limit Theorem and is based on a normal
+    approximation of the distribution of the time-averaged default rates.
+
+    Simulation studies show that the quality of the normal approximation is moderate
+    but exhibits a conservative bias. As a consequence, the true Type I error tends
+    to be lower than the nominal level of the test, i.e. the proportion of
+    erroneous rejections of PD forecasts will be smaller than might be expected from
+    the formal confidence level of the test. The test seems even to be, to a certain
+    degree, robust against a violation of the assumption that defaults are independent
+    over time. However, the power of the test is moderate, in particular for short
+    time series (for example five years).
+
+    """
+
+    length = len(predicted_pd)
+
+    standard_error = sum((predicted_pd - realised_pd) ** 2) - (
+        (sum(predicted_pd - realised_pd) ** 2 / length)
+    ) / (length - 1)
+    t_stat = sum(predicted_pd - realised_pd) / np.sqrt(standard_error * length)
+    p_value = t.cdf(abs(t_stat))
+    estimate = sum(predicted_pd - realised_pd)
+
+    # create dataframe from inputs
+    return pd.DataFrame(
+        {"estimate": estimate, "t_stat": t_stat, "p_value": p_value, "outcome": np.nan}
+    )
