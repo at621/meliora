@@ -55,9 +55,8 @@ Tests that are currently included in the package
 | 22 | Migration matrices test                            | Discrimination   | PD       |
 | 23 | Loss Shortfall                                     | Predictive power | LGD      |
 | 24 | Mean Absolute Deviation                            | Predictive power | LGD      |
-| 25 | Bucket test                                        | Predictive power | LGD      |
-| 26 | Population Stability Index                         | Stability        | PD       |
-| 27 | Stability of transition matrices                   | Stability        | PD       |
+| 25 | Population Stability Index                         | Stability        | PD       |
+| 26 | Stability of transition matrices                   | Stability        | PD       |
 
 Full list of dependencies
 ---------------------------
