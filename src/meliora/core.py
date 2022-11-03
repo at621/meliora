@@ -1163,7 +1163,7 @@ def lgd_t_test(df, observed_lgd, expected_lgd, level="portfolio", segment_col=No
     if df[expected_lgd].hasnans:
         raise ValueError("Missing values in {}".format(expected_lgd))
 
-    if level == "segment":
+    if level == "pool":
         results = []
 
         for segment in df[segment_col].unique():
@@ -1217,7 +1217,7 @@ def lgd_t_test(df, observed_lgd, expected_lgd, level="portfolio", segment_col=No
         )
 
         # from list of lists to dataframe
-    results = pd.DataFrame(
+    results_df = pd.DataFrame(
         results,
         columns=[
             "segment",
@@ -1231,7 +1231,7 @@ def lgd_t_test(df, observed_lgd, expected_lgd, level="portfolio", segment_col=No
         ],
     )
 
-    return results  # todo: results do not make sense
+    return results_df  # todo: results do not make sense
 
 
 def migration_matrix_stability(df, initial_ratings_col, final_ratings_col):
