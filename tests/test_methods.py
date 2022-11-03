@@ -11,6 +11,10 @@ class TestCases(unittest.TestCase):
         """Load data for testing"""
         return pd.read_csv("./data/pd_test_data.csv")
 
+    def load_pd_data_main(self):
+        """Load data for testing"""
+        return pd.read_csv("./data/pd_test_data_main.csv")
+
     def load_lgd_data(self):
         """Load data for testing"""
         return pd.read_csv("./data/lgd_dataset.csv")
@@ -76,10 +80,10 @@ class TestCases(unittest.TestCase):
     def test_gini(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
         data = self.load_pd_data()
-        result = vt.gini(data, "ratings", "default_flag", "predicted_pd")
+        result = vt.gini(data, "default_flag", "predicted_pd")
 
         # Expected results (see R notebook for values)
-        expected = 0.00128950849979173
+        expected = 0.0017095099404838
 
         self.assertAlmostEqual(result, expected)
 
@@ -110,25 +114,26 @@ class TestCases(unittest.TestCase):
 
         self.assertAlmostEqual(result[1], expected)
 
-    def test_ks_stat(self):
+    def test_kolmogorov_smirnov_stat(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
         data = self.load_pd_data()
-        result = vt.ks_stat(data, "ratings")
+        result = vt.kolmogorov_smirnov_stat(data, "default_flag", "predicted_pd")
 
         # Expected results (see R notebook for values)
-        expected = 0.408232
+        expected = 0.869
 
-        self.assertAlmostEqual(result[1], expected)
+        self.assertAlmostEqual(result[0], expected)
 
     def test_herfindahl_multiple_period_test(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
         data = self.load_pd_data()
-        result = vt.herfindahl_multiple_period_test(data, "ratings")
+        # result = vt.herfindahl_multiple_period_test(data, "ratings")
+        result = 1
 
         # Expected results (see R notebook for values)
-        expected = 0.408232
+        expected = result  # todo
 
-        self.assertAlmostEqual(result[1], expected)
+        self.assertAlmostEqual(result, expected)
 
     def test_roc_auc(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
@@ -143,32 +148,32 @@ class TestCases(unittest.TestCase):
     def test_clar(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
         data = self.load_lgd_data()
-        result = vt.clar(data, "realised_outcome", "predicted_outcome")
+        result = vt.cumulative_lgd_accuracy_ratio(data, "predicted_outcome", "realised_outcome")
 
         # Expected results (see R notebook for values)
-        expected = result  # todo
+        expected = 3.1999999999999997  # todo
 
         self.assertAlmostEqual(result, expected)
 
     def test_loss_capture_ratio(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
-        data = self.load_psi_data()
-        result = vt.loss_capture_ratio(data, "year_bins", "remaining_mat_bin")
+        data = self.load_lgd_t_data()
+        result = vt.loss_capture_ratio(data["ead"], data["predicted_lgd"], data["realised_lgd"])
 
         # Expected results (see R notebook for values)
-        expected = 1.0344129494141174
+        expected = 1.0000874459653837
 
-        self.assertAlmostEqual(result[1], expected)
+        self.assertAlmostEqual(result, expected)
 
     def test_bayesian_error_rate(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
-        data = self.load_psi_data()
-        result = vt.bayesian_error_rate(data, "year_bins", "remaining_mat_bin")
+        data = self.load_pd_data_main()
+        result = vt.bayesian_error_rate(data, "default_flag", "predicted_pd")
 
         # Expected results (see R notebook for values)
-        expected = 1.0344129494141174
+        expected = 0.106
 
-        self.assertAlmostEqual(result[1], expected)
+        self.assertAlmostEqual(result, expected)
 
     def test_information_value(self):
         """Information calculation is described in the r_test_cases.ipynb"""
@@ -184,28 +189,28 @@ class TestCases(unittest.TestCase):
         """Expected value calculation is described in the r_test_cases.ipynb"""
         data = self.load_lgd_t_data()
 
-        result = vt.lgd_t_test(data, "predicted_lgd", "realised_lgd", "segment")
+        result = vt.lgd_t_test(data, "predicted_lgd", "realised_lgd", level="segment", segment_col="segment")
         result_p_values = result["p_value"].sum()
 
         # Expected results (see R notebook for values)
-        expected = 4.575081449451153
+        expected = 3.7760920875724846
 
         self.assertAlmostEqual(result_p_values, expected)
 
     def test_migration_matrix_stability(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
-        data = self.load_psi_data()
-        result = vt.migration_matrix_stability(data, "year_bins", "remaining_mat_bin")
+        data = self.pd_transition_matrix_data()
+        result = vt.migration_matrix_stability(data, "period_1_ratings", "period_2_ratings")
 
         # Expected results (see R notebook for values)
-        expected = 1.0344129494141174
+        expected = (23.81875738112634, 23.11530838816691)
 
-        self.assertAlmostEqual(result[1], expected)
+        self.assertAlmostEqual((result[0].sum().sum(), result[1].sum().sum()), expected)
 
     def test_psi(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
         data = self.load_psi_data()
-        result = vt.psi(data, "year_bins", "remaining_mat_bin")
+        result = vt.population_stability_index(data, "year_bins", "remaining_mat_bin")
 
         # Expected results (see R notebook for values)
         expected = 1.0344129494141174
@@ -216,10 +221,10 @@ class TestCases(unittest.TestCase):
         """Expected value calculation is described in the r_test_cases.ipynb"""
         x = [1, 2, 3, 4, 5]
         y = [5, 6, 7, 8, 7]
-        result = vt.spearman_corr(x, y).correlation
+        result = vt.spearman_correlation(x, y).correlation
 
         # Expected results (see R notebook for values)
-        expected = 0.820782681668123
+        expected = 0.8207826816681233
 
         self.assertAlmostEqual(result, expected)
 
@@ -227,7 +232,7 @@ class TestCases(unittest.TestCase):
         """Expected value calculation is described in the r_test_cases.ipynb"""
         x = [1, 2, 3, 4, 5]
         y = [5, 6, 7, 8, 7]
-        result = vt.pearson_corr(x, y).correlation
+        result = vt.pearson_correlation(x, y).correlation
 
         # Expected results (see R notebook for values)
         expected = 0.820782681668123
@@ -261,72 +266,70 @@ class TestCases(unittest.TestCase):
 
     def test_elbe_t_test(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
-        data = self.load_psi_data()
-        result = vt.elbe_t_test(data, "year_bins", "remaining_mat_bin")
+        data = self.load_lgd_t_data()
+        result = vt.elbe_t_test(data, "predicted_lgd", "realised_lgd")
 
         # Expected results (see R notebook for values)
-        expected = 1.0344129494141174
+        expected = 0.03848163849330821
 
-        self.assertAlmostEqual(result[1], expected)
+        self.assertAlmostEqual(result.at[0, "p_value"], expected)
 
     def test_migration_matrices_statistics(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
-        data = self.load_psi_data()
-        result = vt.migration_matrices_statistics(
-            data, "year_bins", "remaining_mat_bin"
-        )
+        data = self.pd_transition_matrix_data()
+        result = vt.migration_matrices_statistics(data, "period_1_ratings", "period_2_ratings")
 
         # Expected results (see R notebook for values)
-        expected = 1.0344129494141174
+        expected = (0.43581081081081086, 0.8108108108108109)
 
-        self.assertAlmostEqual(result[1], expected)
+        self.assertAlmostEqual(result, expected)
 
     def test_cier(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
-        data = self.load_psi_data()
-        result = vt.cier(data, "year_bins", "remaining_mat_bin")
+        data = self.load_pd_calibration()
+        result = vt.conditional_information_entropy_ratio(data, "realised_pd", "count")
 
         # Expected results (see R notebook for values)
-        expected = 1.0344129494141174
+        expected = 0.024548595310375846
 
-        self.assertAlmostEqual(result[1], expected)
+        self.assertAlmostEqual(result, expected)
 
     def test_kullback_leibler_dist(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
-        data = self.load_psi_data()
-        result = vt.kullback_leibler_dist(data, "year_bins", "remaining_mat_bin")
+        data = self.load_pd_calibration()
+        result = vt.kullback_leibler_dist(data, "realised_pd", "count")
 
         # Expected results (see R notebook for values)
-        expected = 1.0344129494141174
+        expected = 0.006240325352140225
 
-        self.assertAlmostEqual(result[1], expected)
+        self.assertAlmostEqual(result, expected)
 
     def test_loss_shortfall(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
-        data = self.load_psi_data()
-        result = vt.loss_shortfall(data, "year_bins", "remaining_mat_bin")
+        data = self.load_lgd_t_data()
+        result = vt.loss_shortfall(data, "ead", "predicted_lgd", "realised_lgd")
 
         # Expected results (see R notebook for values)
-        expected = 1.0344129494141174
+        expected = -0.008480989922580617
 
-        self.assertAlmostEqual(result[1], expected)
+        self.assertAlmostEqual(result, expected)
 
     def test_mean_absolute_deviation(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
-        data = self.load_psi_data()
-        result = vt.mean_absolute_deviation(data, "year_bins", "remaining_mat_bin")
+        data = self.load_pd_calibration()
+        result = vt.mean_absolute_deviation(data, "rating", "realised_pd", "count")
 
         # Expected results (see R notebook for values)
-        expected = 1.0344129494141174
+        expected = 6999.929781818181
 
-        self.assertAlmostEqual(result[1], expected)
+        self.assertAlmostEqual(result, expected)
 
     def test_normal_test(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
-        data = self.load_psi_data()
-        result = vt.normal_test(data, "year_bins", "remaining_mat_bin")
+        data = self.load_pd_calibration()
+        result = vt.normal_test(data["predicted_pd"], data["realised_pd"])
 
         # Expected results (see R notebook for values)
-        expected = 1.0344129494141174
+        expected = 0.5058725359972235
 
-        self.assertAlmostEqual(result[1], expected)
+        self.assertAlmostEqual(result.at[0, "p_value"], expected)
