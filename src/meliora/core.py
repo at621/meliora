@@ -1169,20 +1169,20 @@ def lgd_t_test(df, observed_lgd, expected_lgd, level="portfolio", segment_col=No
         for segment in df[segment_col].unique():
             df_segment = df[df[segment_col] == segment]
 
-            N = len(df_segment)
+            length = len(df_segment)
             obs_lgd = df_segment[observed_lgd]
             pred_lgd = df_segment[expected_lgd]
             error = obs_lgd - pred_lgd
             mean_error = error.mean()
-            num = np.sqrt(N) * mean_error
-            lgd_s2 = ((error - mean_error) ** 2).sum() / (N - 1)
+            num = np.sqrt(length) * mean_error
+            lgd_s2 = ((error - mean_error) ** 2).sum() / (length - 1)
             t_stat = num / np.sqrt(lgd_s2)
-            p_value = 1 - t.cdf(t_stat, df=N - 1)
+            p_value = 1 - t.cdf(t_stat, df=length - 1)
 
             results.append(
                 [
                     segment,
-                    N,
+                    length,
                     obs_lgd.mean(),
                     pred_lgd.mean(),
                     lgd_s2,
@@ -1193,20 +1193,20 @@ def lgd_t_test(df, observed_lgd, expected_lgd, level="portfolio", segment_col=No
             )
 
     else:
-        N = len(df)
+        length = len(df)
         obs_lgd = df[observed_lgd]
         pred_lgd = df[expected_lgd]
         error = obs_lgd - pred_lgd
         mean_error = error.mean()
-        num = np.sqrt(N) * mean_error
-        lgd_s2 = ((error - mean_error) ** 2).sum() / (N - 1)
+        num = np.sqrt(length) * mean_error
+        lgd_s2 = ((error - mean_error) ** 2).sum() / (length - 1)
         t_stat = num / np.sqrt(lgd_s2)
-        p_value = 1 - t.cdf(t_stat, df=N - 1)
+        p_value = 1 - t.cdf(t_stat, df=length - 1)
 
         results.append(
             [
                 segment,
-                N,
+                length,
                 obs_lgd.mean(),
                 pred_lgd.mean(),
                 lgd_s2,
