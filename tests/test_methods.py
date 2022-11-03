@@ -189,7 +189,7 @@ class TestCases(unittest.TestCase):
         """Expected value calculation is described in the r_test_cases.ipynb"""
         data = self.load_lgd_t_data()
 
-        result = vt.lgd_t_test(data, "predicted_lgd", "realised_lgd", level="segment", segment_col="segment")
+        result = vt.lgd_t_test(data, "predicted_lgd", "realised_lgd", level="pool", segment_col="segment")
         result_p_values = result["p_value"].sum()
 
         # Expected results (see R notebook for values)
