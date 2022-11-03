@@ -1701,6 +1701,8 @@ def normal_test(predicted_pd, realised_pd, alpha=0.05):
     over time. However, the power of the test is moderate, in particular for short
     time series (for example five years).
 
+    todo
+
     """
 
     length = len(predicted_pd)
