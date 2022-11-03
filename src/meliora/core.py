@@ -1562,19 +1562,19 @@ def migration_matrices_statistics(df, period_1_ratings, period_2_ratings):
     K = len(set(df["period_1_ratings"]))
     for i in range(1, K - 1 + 1):
         for j in range(i + 1, K + 1):
-            c = p_ij.iloc[i - 1 : i, i:].sum(axis=1).values[0]
+            cac = p_ij.iloc[i - 1 : i, i:].sum(axis=1).values[0]
         b = n_ij.sum(axis=1).values[i - 1]
         a = max(i - K, i - 1)
-        mnormu += a * b * c
+        mnormu += a * b * cac
 
     mnorml = 0
     K = len(set(df["period_1_ratings"]))
     for i in range(2, K + 1):
         for j in range(1, i - 1 + 1):
-            c = p_ij.iloc[i - 1 : i, i:].sum(axis=1).values[0]
+            coc = p_ij.iloc[i - 1 : i, i:].sum(axis=1).values[0]
         b = n_ij.sum(axis=1).values[i - 1]
         a = max(i - K, i - 1)
-        mnorml += a * b * c
+        mnorml += a * b * coc
 
     upper_mwb = 0
     for i in range(1, K - 1 + 1):
