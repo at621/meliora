@@ -1165,7 +1165,6 @@ def lgd_t_test(df, observed_lgd, expected_lgd, level="portfolio", segment_col=No
 
     results = []
     if level == "pool":
-        
 
         for segment in df[segment_col].unique():
             df_segment = df[df[segment_col] == segment]
@@ -1574,7 +1573,7 @@ def migration_matrices_statistics(df, period_1_ratings, period_2_ratings):
     for i in range(2, K + 1):
         for j in range(1, i - 1 + 1):
             coc = p_ij.iloc[i - 1 : i, i:].sum(axis=1).values[0]
-            b = n_ij.sum(axis=1).values[i - 1]
+            b = n_ij.sum(axis=1).values[i - 1]  # todo
             a = max(i - K, i - 1)
             mnorml += a * b * coc
 
