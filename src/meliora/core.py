@@ -913,7 +913,7 @@ def gini(df, target, prediction):
     return roc * 2 - 1
 
 
-def ks_stat(df, target, prediction):
+def kolmogorov_smirnov_stat(df, target, prediction):
     """Compute Area ROC AUC from prediction scores.
     todo
     """
@@ -931,7 +931,7 @@ def ks_stat(df, target, prediction):
     return result
 
 
-def clar(df, predicted_ratings, realised_outcomes):
+def cumulative_lgd_accuracy_ratio(df, predicted_ratings, realised_outcomes):
     """
     CLAR serves as a measure of ranking ability against LGD risk
     The cumulative LGD accuracy ratio (CLAR) curve can be treated as
@@ -968,7 +968,7 @@ def clar(df, predicted_ratings, realised_outcomes):
     for i, j in enumerate(list(set(df[predicted_ratings]))[::-1]):
         x = (df[predicted_ratings] == j).sum()
         x_bucket = df.sort_values(by=realised_outcomes, ascending=False)[
-            x_s[i]: x_s[i] + x
+            x_s[i] : x_s[i] + x
         ]
         x_value = x / len(df)
         y_value = (x_bucket[realised_outcomes] == j).sum() / len(
@@ -982,9 +982,9 @@ def clar(df, predicted_ratings, realised_outcomes):
     new_yvalues = list(np.cumsum(y_values))
 
     model_auc = auc(new_xvalues, new_yvalues)
-    clar = 2 * model_auc
+    clar_value = 2 * model_auc
 
-    return clar
+    return clar_value
 
 
 def loss_capture_ratio(ead, predicted_ratings, realised_outcomes):
@@ -1054,9 +1054,9 @@ def loss_capture_ratio(ead, predicted_ratings, realised_outcomes):
     )
     random_auc2 = 0.5 * len(df3) * 1
 
-    loss_capture_ratio = (auc_curve1 - random_auc1) / (auc_curve2 - random_auc2)
+    lcr = (auc_curve1 - random_auc1) / (auc_curve2 - random_auc2)
 
-    return loss_capture_ratio
+    return lcr
 
 
 def bayesian_error_rate(df, default_flag, prob_default):
@@ -1378,11 +1378,11 @@ def migration_matrix_stability(df, initial_ratings_col, final_ratings_col):
                 z_ij = np.nan
 
             z_df.iloc[i - 1, j - 1] = z_ij
-    phi_df = z_df.apply(lambda x: x.apply(lambda y: norm.cdf(y)))
+    phi_df = z_df.apply(lambda x: x.apply(norm.cdf))
     return z_df, phi_df
 
 
-def psi(data, bin_flag, variable):  # todo: expected vs actual
+def population_stability_index(data, bin_flag, variable):  # todo: expected vs actual
     """Calculate the PSI for a single variable
     Args:
         expected_array: numpy array of original values
@@ -1528,7 +1528,7 @@ def somersd(array_1, array_2, alternative="two-sided"):
     return stats.somersd(array_1, array_2, alternative="two-sided")
 
 
-def spearman_corr(array_1, array_2, alternative="two-sided"):
+def spearman_correlation(array_1, array_2):
     """
     Calculate a Spearman correlation coefficient with associated p-value.
     This is a wrapper around scipy.stats.spearmanr function.
@@ -1589,7 +1589,7 @@ def spearman_corr(array_1, array_2, alternative="two-sided"):
     return stats.spearmanr(array_1, array_2, alternative="two-sided")
 
 
-def pearson_corr(array_1, array_2):
+def pearson_correlation(array_1, array_2):
     """
     Calculate a Pearson correlation coefficient with associated p-value.
     This is a wrapper around scipy.stats.pearsonr function.
@@ -1625,7 +1625,7 @@ def pearson_corr(array_1, array_2):
         Probability and Statistics Tables and Formulae. Chapman & Hall: New
     """
 
-    pass
+    return stats.spearmanr(array_1, array_2)
 
 
 def migration_matrices_statistics(df, period_1_ratings, period_2_ratings):
@@ -1643,7 +1643,7 @@ def migration_matrices_statistics(df, period_1_ratings, period_2_ratings):
     K = len(set(df["period_1_ratings"]))
     for i in range(1, K - 1 + 1):
         for j in range(i + 1, K + 1):
-            c = p_ij.iloc[i - 1: i, i:].sum(axis=1).values[0]
+            c = p_ij.iloc[i - 1 : i, i:].sum(axis=1).values[0]
         b = n_ij.sum(axis=1).values[i - 1]
         a = max(i - K, i - 1)
         mnormu += a * b * c
@@ -1652,7 +1652,7 @@ def migration_matrices_statistics(df, period_1_ratings, period_2_ratings):
     K = len(set(df["period_1_ratings"]))
     for i in range(2, K + 1):
         for j in range(1, i - 1 + 1):
-            c = p_ij.iloc[i - 1: i, i:].sum(axis=1).values[0]
+            c = p_ij.iloc[i - 1 : i, i:].sum(axis=1).values[0]
         b = n_ij.sum(axis=1).values[i - 1]
         a = max(i - K, i - 1)
         mnorml += a * b * c
@@ -1701,7 +1701,7 @@ def _entropy(data, realised_pd, count):
     return h0, h1
 
 
-def cier(data, rating, realised_pd, count):
+def conditional_information_entropy_ratio(data, realised_pd, count):
     """CIER measures the ratio of distance between Unconditional and
     Conditional Entropy to Unconditional Entropy."""
 
@@ -1710,7 +1710,7 @@ def cier(data, rating, realised_pd, count):
     return (h0 - h1) / h0
 
 
-def kullback_leibler_dist(data, rating, realised_pd, count):
+def kullback_leibler_dist(data, realised_pd, count):
     """CIER measures the ratio of distance between Unconditional and
     Conditional Entropy to Unconditional Entropy."""
 
@@ -1760,7 +1760,9 @@ def elbe_t_test(df, lgd, elbe):
     t_stat = num / np.sqrt(s2)
     p_value = 2 * (1 - t.cdf(abs(t_stat), df=N - 1))
 
-    return N, df[lgd].mean(), df[elbe].mean(), t_stat, s2, p_value
+    return pd.DataFrame(
+        {"facilities": [N], "lgd_mean": [df[elbe].mean()], "t_stat": [t_stat], "p_value": [p_value]}
+    )
 
 
 def normal_test(predicted_pd, realised_pd, alpha=0.05):
@@ -1798,10 +1800,10 @@ def normal_test(predicted_pd, realised_pd, alpha=0.05):
         (sum(predicted_pd - realised_pd) ** 2 / length)
     ) / (length - 1)
     t_stat = sum(predicted_pd - realised_pd) / np.sqrt(standard_error * length)
-    p_value = t.cdf(abs(t_stat))
+    p_value = t.cdf(abs(t_stat), df=length)
     estimate = sum(predicted_pd - realised_pd)
 
     # create dataframe from inputs
     return pd.DataFrame(
-        {"estimate": estimate, "t_stat": t_stat, "p_value": p_value, "outcome": np.nan}
+        {"estimate": [estimate], "t_stat": [t_stat], "p_value": [p_value], "outcome": [np.nan]}
     )

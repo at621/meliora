@@ -259,16 +259,6 @@ class TestCases(unittest.TestCase):
 
         self.assertAlmostEqual(tau, expected)
 
-    def test_lgd_t_test(self):
-        """Expected value calculation is described in the r_test_cases.ipynb"""
-        data = self.load_psi_data()
-        result = vt.lgd_t_test(data, "year_bins", "remaining_mat_bin")
-
-        # Expected results (see R notebook for values)
-        expected = 1.0344129494141174
-
-        self.assertAlmostEqual(result[1], expected)
-
     def test_elbe_t_test(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
         data = self.load_psi_data()
@@ -282,7 +272,9 @@ class TestCases(unittest.TestCase):
     def test_migration_matrices_statistics(self):
         """Expected value calculation is described in the r_test_cases.ipynb"""
         data = self.load_psi_data()
-        result = vt.migration_matrices_statistics(data, "year_bins", "remaining_mat_bin")
+        result = vt.migration_matrices_statistics(
+            data, "year_bins", "remaining_mat_bin"
+        )
 
         # Expected results (see R notebook for values)
         expected = 1.0344129494141174
