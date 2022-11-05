@@ -14,6 +14,7 @@ from scipy.stats import ks_2samp
 
 def _binomial(p, d, n):
     """
+    A binomial discrete random variable.
 
     Parameters
     ----------
@@ -28,9 +29,8 @@ def _binomial(p, d, n):
     Notes
     -----
     If the defaults are modeled as iid Bernoulli trials with success probability p,
-    then the number of defaults d is a draw from Binomial(n, p).
-    The one-sided p-value is the probability that such a draw
-    would be at least as large as d.
+    then the number of defaults d is a draw from Binomial(n, p). The one-sided p-value
+    is the probability that such a draw would be at least as large as d.
     """
 
     p_value = 1 - binom.cdf(d - 1, n, p)
@@ -39,11 +39,11 @@ def _binomial(p, d, n):
 
 
 def binomial_test(data, ratings, default_flag, predicted_pd, alpha_level=0.05):
-    """Calculate the Binomial test for a given probability of defaults buckets
+    """A binomial test for a given probability of defaults buckets
 
     Parameters
     ----------
-    data : Pandas DataFrame with at least three columns
+    data : Pandas DataFrame with three columns
             ratings : PD rating class of obligor
             default_flag : 1 (or True) for defaulted and 0 (or False) for good obligors
             probs_default : predicted probability of default of an obligor
@@ -55,7 +55,7 @@ def binomial_test(data, ratings, default_flag, predicted_pd, alpha_level=0.05):
 
     Returns
     -------
-    Pandas DataFrame with the following columns :
+    Pandas DataFrame with the following columns:
         Rating (Index) : Contains the ratings of each class/group
         PD : predicted default rate in each group
         N : number of obligors in each group
@@ -102,10 +102,14 @@ def binomial_test(data, ratings, default_flag, predicted_pd, alpha_level=0.05):
     """
 
     # Perform plausibility checks
-    assert all(x in data.columns for x in [ratings, default_flag, predicted_pd]), "Missing columns"
-    assert all(x in [0, False, 1, True] for x in data[default_flag]), "Default flag can have only value 0 and 1"
-    assert len(data[ratings].unique()) < 40, "Number of PD ratings is excessive"
-    assert all(x >= 0 and x <= 1 for x in data[predicted_pd]), "Predicted PDs must be between 0% and 100%"
+    if not len(data[ratings].unique()) < 40:
+        raise RuntimeError("Number of PD ratings is excessive")
+    if not all(x in data.columns for x in [ratings, default_flag, predicted_pd]):
+        raise RuntimeError("Missing columns")
+    if not all(x in [0, False, 1, True] for x in data[default_flag]):
+        raise RuntimeError("Default flag can have only value 0 and 1")
+    if not all(x >= 0 and x <= 1 for x in data[predicted_pd]):
+        raise RuntimeError("Predicted PDs must be between 0% and 100%")
 
     # Transform input data into the required format
     df = data.groupby(ratings).agg({predicted_pd: "mean", default_flag: ["count", "sum", "mean"]}).reset_index()
@@ -2136,9 +2140,9 @@ def normal_test(predicted_pd, realised_pd, alpha=0.05):
 
     length = len(predicted_pd)
 
-    standard_error = sum((predicted_pd - realised_pd) ** 2) - ((sum(predicted_pd - realised_pd) ** 2 / length)) / (
-        length - 1
-    )
+    error = predicted_pd - realised_pd
+
+    standard_error = sum((error) ** 2) - ((sum(error) ** 2 / length)) / (length - 1)
     t_stat = sum(predicted_pd - realised_pd) / np.sqrt(standard_error * length)
     p_value = t.cdf(abs(t_stat), df=length)
     estimate = sum(predicted_pd - realised_pd)
