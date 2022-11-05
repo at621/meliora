@@ -1,0 +1,17 @@
+
+[JEFFREYS_TEST]
+
+[JEFFREYS_TEST.HIGH_DEFAULT_PORTFOLIO]
+    RED_ASSESSMENT = {value = 0.1, operator = 'less_or_equal'}
+    AMBER_ASSESSMENT = {value = 0.2, operator = 'less_or_equal'}
+    GREEN_ASSESSMENT = {value = 0.2, operator = 'higher'}
+
+[JEFFREYS_TEST.LOW_DEFAULT_PORTFOLIO]
+    RED_ASSESSMENT = {value = 0.1, operator = 'less_or_equal'}
+    AMBER_ASSESSMENT = {value = 0.2, operator = 'less_or_equal'}
+    GREEN_ASSESSMENT = {value = 0.2, operator = 'higher'}
+
+[JEFFREYS_TEST.CUSTOM]
+    RED_ASSESSMENT = {value = 0.1, operator = 'less_or_equal'}
+    AMBER_ASSESSMENT = {value = 0.2, operator = 'less_or_equal'}
+    GREEN_ASSESSMENT = {value = 0.2, operator = 'higher'}

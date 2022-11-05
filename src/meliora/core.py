@@ -843,6 +843,56 @@ def gini(df, target, prediction):
     """Compute Area ROC AUC from prediction scores.
 
     todo
+
+    The Ljung-Box (1978) modified portmanteau test. In the
+    multivariate time series, this test statistic is asymptotically equal to
+    Hosking`. This method and the bottom documentation is taken directly from the
+    original 'portes' package.
+
+    The approach used mirrors the one used in Information::create_infotables().
+
+    author Mark Powers <mark.powers@@microsoft.com>
+
+        Calculate Kendall's tau, a correlation measure for ordinal data.
+
+    This method and the bottom documentation is taken directly from the
+    original SciPy package (kendalltau).
+
+    Kendall's tau is a measure of the correspondence between two rankings.
+    Values close to 1 indicate strong agreement, and values close to -1
+    indicate strong disagreement. This implements two variants of Kendall's
+    tau: tau-b (the default) and tau-c (also known as Stuart's tau-c). These
+    differ only in how they are normalized to lie within the range -1 to 1;
+    the hypothesis tests (their p-values) are identical. Kendall's original
+    tau-a is not implemented separately because both tau-b and tau-c reduce
+    to tau-a in the absence of ties.
+
+    Parameters
+    ----------
+    x, y : array_like
+        Arrays of rankings, of the same shape. If arrays are not 1-D, they
+        will be flattened to 1-D.
+
+    Returns
+    -------
+    correlation : float
+       The tau statistic.
+    pvalue : float
+       The p-value for a hypothesis test whose null hypothesis is
+       an absence of association, tau = 0.
+
+    References
+    --------------
+    [1] Maurice G. Kendall, "A New Measure of Rank Correlation", Biometrika
+           Vol. 30, No. 1/2, pp. 81-93, 1938.
+
+    Examples
+    --------
+    >>> from scipy import stats
+    >>> x1 = [12, 2, 1, 12, 2]
+    >>> tau, p_value = kendall_tau(x1, x2)
+    >>> tau
+    -0.47140452079103173
     """
 
     # Perform plausibility checks
@@ -856,7 +906,47 @@ def gini(df, target, prediction):
 
 def kolmogorov_smirnov_stat(df, target, prediction):
     """Compute Area ROC AUC from prediction scores.
-    todo
+
+        Calculate Kendall's tau, a correlation measure for ordinal data.
+
+    This method and the bottom documentation is taken directly from the
+    original SciPy package (kendalltau).
+
+    Kendall's tau is a measure of the correspondence between two rankings.
+    Values close to 1 indicate strong agreement, and values close to -1
+    indicate strong disagreement. This implements two variants of Kendall's
+    tau: tau-b (the default) and tau-c (also known as Stuart's tau-c). These
+    differ only in how they are normalized to lie within the range -1 to 1;
+    the hypothesis tests (their p-values) are identical. Kendall's original
+    tau-a is not implemented separately because both tau-b and tau-c reduce
+    to tau-a in the absence of ties.
+
+    Parameters
+    ----------
+    x, y : array_like
+        Arrays of rankings, of the same shape. If arrays are not 1-D, they
+        will be flattened to 1-D.
+
+    Returns
+    -------
+    correlation : float
+       The tau statistic.
+    pvalue : float
+       The p-value for a hypothesis test whose null hypothesis is
+       an absence of association, tau = 0.
+
+    References
+    --------------
+    [1] Maurice G. Kendall, "A New Measure of Rank Correlation", Biometrika
+           Vol. 30, No. 1/2, pp. 81-93, 1938.
+
+    Examples
+    --------
+    >>> from scipy import stats
+    >>> x1 = [12, 2, 1, 12, 2]
+    >>> tau, p_value = kendall_tau(x1, x2)
+    >>> tau
+    -0.47140452079103173
     """
 
     # Perform plausibility checks
@@ -875,22 +965,26 @@ def cumulative_lgd_accuracy_ratio(df, predicted_ratings, realised_outcomes):
     the equivalent of the Cumulative Accuracy Profile (CAP) curve. This
     test compares the cumulative percentage of correctly assigned realized
     LGD and the cumulative rate of observations in the predicted LGD bands.
+
     Parameters
     ----------
     predicted_ratings: pandas Series
         predicted LGD, can be ordinal or continuous
     realised_outcomes: pandas Series
         realised LGD, can be ordinal or continuous
+
     Returns
     -------
     clar: scalar
         Cumulative LGD Accuracy Ratio
+
     References
     --------------
     [1] Ozdemir, B., Miu, P., 2009. Basel II Implementation.
     A Guide to Developing and Validating a Compliant Internal Risk Rating
     System. McGraw-Hill, USA.
     [2] See also: https://rdrr.io/cran/VUROCS/man/clar.html
+
     Examples
     --------
         >>> res = clar(predicted_ratings, realised_outcomes)
@@ -935,6 +1029,7 @@ def loss_capture_ratio(ead, predicted_ratings, realised_outcomes):
     uses the LGD and LR multiplied with the respective EAD as input.
     The results between the two approaches can differ  if the portfolio
     is not-well balanced.
+
     Parameters
     ----------
     ead: pandas Series
@@ -943,15 +1038,18 @@ def loss_capture_ratio(ead, predicted_ratings, realised_outcomes):
         predicted LGD, can be ordinal or continuous
     realised_outcomes: pandas Series
         realised LGD, can be ordinal or continuous
+
     Returns
     -------
     LCR: scalar
         Loss Capture Ratio
+
     References
     ----------------
     Li, D., Bhariok, R., Keenan, S., & Santilli, S. (2009). Validation techniques
     and performance metrics for loss given default models.
     The Journal of Risk Model Validation, 33, 3-26.
+
     Examples
     --------
         >>> res = loss_capture_ratio(ead, predicted_ratings, realised_outcomes)
@@ -995,6 +1093,7 @@ def bayesian_error_rate(df, default_flag, prob_default):
     the BER has a value of zero. A model's BER depends on the probability
     of default. The lower the BER, and the lower the classification error,
     the better the model.
+
     The Bayesian error rate specifies the minimum probability of error if
     the rating system or score function under consideration is used for a
     yes/no decision whether a borrower will default or not. The error can
@@ -1010,12 +1109,14 @@ def bayesian_error_rate(df, default_flag, prob_default):
     In practice, therefore, the error rate is often applied
     with a fictitious 50% probability of default. In this case, the error
     rate is equivalent to the Kolmogorov-Smirnov statistic and to the Pietra index.
+
     Parameters
     ----------
     default_flag : pandas series
         Boolean flag indicating whether the borrower has actually defaulted
     prob_default : pandas series
         Predicted default probability, as returned by a classifier.
+
     Returns
     ---------
     score : float
@@ -1304,6 +1405,7 @@ def migration_matrix_stability(df, initial_ratings_col, final_ratings_col):
 
 def population_stability_index(data, bin_flag, variable):  # todo: expected vs actual
     """Calculate the PSI for a single variable
+
     Args:
         expected_array: numpy array of original values
         actual_array: numpy array of new values, same size as expected
@@ -1311,6 +1413,46 @@ def population_stability_index(data, bin_flag, variable):  # todo: expected vs a
     Returns:
         psi_value: calculated PSI value
 
+        Calculate Kendall's tau, a correlation measure for ordinal data.
+
+    This method and the bottom documentation is taken directly from the
+    original SciPy package (kendalltau).
+
+    Kendall's tau is a measure of the correspondence between two rankings.
+    Values close to 1 indicate strong agreement, and values close to -1
+    indicate strong disagreement. This implements two variants of Kendall's
+    tau: tau-b (the default) and tau-c (also known as Stuart's tau-c). These
+    differ only in how they are normalized to lie within the range -1 to 1;
+    the hypothesis tests (their p-values) are identical. Kendall's original
+    tau-a is not implemented separately because both tau-b and tau-c reduce
+    to tau-a in the absence of ties.
+
+    Parameters
+    ----------
+    x, y : array_like
+        Arrays of rankings, of the same shape. If arrays are not 1-D, they
+        will be flattened to 1-D.
+
+    Returns
+    -------
+    correlation : float
+       The tau statistic.
+    pvalue : float
+       The p-value for a hypothesis test whose null hypothesis is
+       an absence of association, tau = 0.
+
+    References
+    --------------
+    [1] Maurice G. Kendall, "A New Measure of Rank Correlation", Biometrika
+           Vol. 30, No. 1/2, pp. 81-93, 1938.
+
+    Examples
+    --------
+    >>> from scipy import stats
+    >>> x1 = [12, 2, 1, 12, 2]
+    >>> tau, p_value = kendall_tau(x1, x2)
+    >>> tau
+    -0.47140452079103173
     """
 
     df = pd.crosstab(data[variable], data[bin_flag], normalize="columns")
@@ -1552,7 +1694,49 @@ def migration_matrices_statistics(df, period_1_ratings, period_2_ratings):
     """
     The objective of this validation tool is to analyse the migration of customers across
     rating grades during the relevant observation period
+
+        Calculate Kendall's tau, a correlation measure for ordinal data.
+
+    This method and the bottom documentation is taken directly from the
+    original SciPy package (kendalltau).
+
+    Kendall's tau is a measure of the correspondence between two rankings.
+    Values close to 1 indicate strong agreement, and values close to -1
+    indicate strong disagreement. This implements two variants of Kendall's
+    tau: tau-b (the default) and tau-c (also known as Stuart's tau-c). These
+    differ only in how they are normalized to lie within the range -1 to 1;
+    the hypothesis tests (their p-values) are identical. Kendall's original
+    tau-a is not implemented separately because both tau-b and tau-c reduce
+    to tau-a in the absence of ties.
+
+    Parameters
+    ----------
+    x, y : array_like
+        Arrays of rankings, of the same shape. If arrays are not 1-D, they
+        will be flattened to 1-D.
+
+    Returns
+    -------
+    correlation : float
+       The tau statistic.
+    pvalue : float
+       The p-value for a hypothesis test whose null hypothesis is
+       an absence of association, tau = 0.
+
+    References
+    --------------
+    [1] Maurice G. Kendall, "A New Measure of Rank Correlation", Biometrika
+           Vol. 30, No. 1/2, pp. 81-93, 1938.
+
+    Examples
+    --------
+    >>> from scipy import stats
+    >>> x1 = [12, 2, 1, 12, 2]
+    >>> tau, p_value = kendall_tau(x1, x2)
+    >>> tau
+    -0.47140452079103173
     """
+
     a = df[period_1_ratings]
     b = df[period_2_ratings]
 
@@ -1596,6 +1780,47 @@ def _entropy(data, realised_pd, count):
     """
     CIER measures the ratio of distance between Unconditional and Conditional Entropy to
     Unconditional Entropy.
+
+        Calculate Kendall's tau, a correlation measure for ordinal data.
+
+    This method and the bottom documentation is taken directly from the
+    original SciPy package (kendalltau).
+
+    Kendall's tau is a measure of the correspondence between two rankings.
+    Values close to 1 indicate strong agreement, and values close to -1
+    indicate strong disagreement. This implements two variants of Kendall's
+    tau: tau-b (the default) and tau-c (also known as Stuart's tau-c). These
+    differ only in how they are normalized to lie within the range -1 to 1;
+    the hypothesis tests (their p-values) are identical. Kendall's original
+    tau-a is not implemented separately because both tau-b and tau-c reduce
+    to tau-a in the absence of ties.
+
+    Parameters
+    ----------
+    x, y : array_like
+        Arrays of rankings, of the same shape. If arrays are not 1-D, they
+        will be flattened to 1-D.
+
+    Returns
+    -------
+    correlation : float
+       The tau statistic.
+    pvalue : float
+       The p-value for a hypothesis test whose null hypothesis is
+       an absence of association, tau = 0.
+
+    References
+    --------------
+    [1] Maurice G. Kendall, "A New Measure of Rank Correlation", Biometrika
+           Vol. 30, No. 1/2, pp. 81-93, 1938.
+
+    Examples
+    --------
+    >>> from scipy import stats
+    >>> x1 = [12, 2, 1, 12, 2]
+    >>> tau, p_value = kendall_tau(x1, x2)
+    >>> tau
+    -0.47140452079103173
     """
 
     # prepare data
@@ -1618,7 +1843,49 @@ def _entropy(data, realised_pd, count):
 
 def conditional_information_entropy_ratio(data, realised_pd, count):
     """CIER measures the ratio of distance between Unconditional and
-    Conditional Entropy to Unconditional Entropy."""
+    Conditional Entropy to Unconditional Entropy.
+
+        Calculate Kendall's tau, a correlation measure for ordinal data.
+
+    This method and the bottom documentation is taken directly from the
+    original SciPy package (kendalltau).
+
+    Kendall's tau is a measure of the correspondence between two rankings.
+    Values close to 1 indicate strong agreement, and values close to -1
+    indicate strong disagreement. This implements two variants of Kendall's
+    tau: tau-b (the default) and tau-c (also known as Stuart's tau-c). These
+    differ only in how they are normalized to lie within the range -1 to 1;
+    the hypothesis tests (their p-values) are identical. Kendall's original
+    tau-a is not implemented separately because both tau-b and tau-c reduce
+    to tau-a in the absence of ties.
+
+    Parameters
+    ----------
+    x, y : array_like
+        Arrays of rankings, of the same shape. If arrays are not 1-D, they
+        will be flattened to 1-D.
+
+    Returns
+    -------
+    correlation : float
+       The tau statistic.
+    pvalue : float
+       The p-value for a hypothesis test whose null hypothesis is
+       an absence of association, tau = 0.
+
+    References
+    --------------
+    [1] Maurice G. Kendall, "A New Measure of Rank Correlation", Biometrika
+           Vol. 30, No. 1/2, pp. 81-93, 1938.
+
+    Examples
+    --------
+    >>> from scipy import stats
+    >>> x1 = [12, 2, 1, 12, 2]
+    >>> tau, p_value = kendall_tau(x1, x2)
+    >>> tau
+    -0.47140452079103173
+    """
 
     h0, h1 = _entropy(data, realised_pd, count)
 
@@ -1639,6 +1906,47 @@ def loss_shortfall(data, ead, predicted_lgd, realised_lgd):
     Loss Shortfall is a measure of the difference between the expected loss and the
     realised loss. It is a measure of the loss that would have been incurred if the
     actual losses were equal to the expected losses.
+
+    Calculate Kendall's tau, a correlation measure for ordinal data.
+
+    This method and the bottom documentation is taken directly from the
+    original SciPy package (kendalltau).
+
+    Kendall's tau is a measure of the correspondence between two rankings.
+    Values close to 1 indicate strong agreement, and values close to -1
+    indicate strong disagreement. This implements two variants of Kendall's
+    tau: tau-b (the default) and tau-c (also known as Stuart's tau-c). These
+    differ only in how they are normalized to lie within the range -1 to 1;
+    the hypothesis tests (their p-values) are identical. Kendall's original
+    tau-a is not implemented separately because both tau-b and tau-c reduce
+    to tau-a in the absence of ties.
+
+    Parameters
+    ----------
+    x, y : array_like
+        Arrays of rankings, of the same shape. If arrays are not 1-D, they
+        will be flattened to 1-D.
+
+    Returns
+    -------
+    correlation : float
+       The tau statistic.
+    pvalue : float
+       The p-value for a hypothesis test whose null hypothesis is
+       an absence of association, tau = 0.
+
+    References
+    --------------
+    [1] Maurice G. Kendall, "A New Measure of Rank Correlation", Biometrika
+           Vol. 30, No. 1/2, pp. 81-93, 1938.
+
+    Examples
+    --------
+    >>> from scipy import stats
+    >>> x1 = [12, 2, 1, 12, 2]
+    >>> tau, p_value = kendall_tau(x1, x2)
+    >>> tau
+    -0.47140452079103173
     """
 
     estimated_losses = data[ead] * data[predicted_lgd]
@@ -1652,6 +1960,47 @@ def mean_absolute_deviation(data, ead, predicted_lgd, realised_lgd):
     Mean Absolute Deviation is a measure of the difference between the expected loss and
     the realised loss. It is a measure of the loss that would have been incurred if the
     actual losses were equal to the expected losses.
+
+        Calculate Kendall's tau, a correlation measure for ordinal data.
+
+    This method and the bottom documentation is taken directly from the
+    original SciPy package (kendalltau).
+
+    Kendall's tau is a measure of the correspondence between two rankings.
+    Values close to 1 indicate strong agreement, and values close to -1
+    indicate strong disagreement. This implements two variants of Kendall's
+    tau: tau-b (the default) and tau-c (also known as Stuart's tau-c). These
+    differ only in how they are normalized to lie within the range -1 to 1;
+    the hypothesis tests (their p-values) are identical. Kendall's original
+    tau-a is not implemented separately because both tau-b and tau-c reduce
+    to tau-a in the absence of ties.
+
+    Parameters
+    ----------
+    x, y : array_like
+        Arrays of rankings, of the same shape. If arrays are not 1-D, they
+        will be flattened to 1-D.
+
+    Returns
+    -------
+    correlation : float
+       The tau statistic.
+    pvalue : float
+       The p-value for a hypothesis test whose null hypothesis is
+       an absence of association, tau = 0.
+
+    References
+    --------------
+    [1] Maurice G. Kendall, "A New Measure of Rank Correlation", Biometrika
+           Vol. 30, No. 1/2, pp. 81-93, 1938.
+
+    Examples
+    --------
+    >>> from scipy import stats
+    >>> x1 = [12, 2, 1, 12, 2]
+    >>> tau, p_value = kendall_tau(x1, x2)
+    >>> tau
+    -0.47140452079103173
     """
 
     return np.sum(np.abs(data[realised_lgd] - data[predicted_lgd]) * data[ead]) / data[ead].sum()
@@ -1662,6 +2011,47 @@ def elbe_t_test(df, lgd, elbe):
     # df should contain the facilities for which backtesting will be performed.
     # LGD is the observed LGD, ELBE is the ELBE for each facility, dataframe
     # columns should be defined in this manner
+
+        Calculate Kendall's tau, a correlation measure for ordinal data.
+
+    This method and the bottom documentation is taken directly from the
+    original SciPy package (kendalltau).
+
+    Kendall's tau is a measure of the correspondence between two rankings.
+    Values close to 1 indicate strong agreement, and values close to -1
+    indicate strong disagreement. This implements two variants of Kendall's
+    tau: tau-b (the default) and tau-c (also known as Stuart's tau-c). These
+    differ only in how they are normalized to lie within the range -1 to 1;
+    the hypothesis tests (their p-values) are identical. Kendall's original
+    tau-a is not implemented separately because both tau-b and tau-c reduce
+    to tau-a in the absence of ties.
+
+    Parameters
+    ----------
+    x, y : array_like
+        Arrays of rankings, of the same shape. If arrays are not 1-D, they
+        will be flattened to 1-D.
+
+    Returns
+    -------
+    correlation : float
+       The tau statistic.
+    pvalue : float
+       The p-value for a hypothesis test whose null hypothesis is
+       an absence of association, tau = 0.
+
+    References
+    --------------
+    [1] Maurice G. Kendall, "A New Measure of Rank Correlation", Biometrika
+           Vol. 30, No. 1/2, pp. 81-93, 1938.
+
+    Examples
+    --------
+    >>> from scipy import stats
+    >>> x1 = [12, 2, 1, 12, 2]
+    >>> tau, p_value = kendall_tau(x1, x2)
+    >>> tau
+    -0.47140452079103173
     """
 
     N = len(df)
@@ -1702,8 +2092,46 @@ def normal_test(predicted_pd, realised_pd, alpha=0.05):
     over time. However, the power of the test is moderate, in particular for short
     time series (for example five years).
 
-    todo
+        Calculate Kendall's tau, a correlation measure for ordinal data.
 
+    This method and the bottom documentation is taken directly from the
+    original SciPy package (kendalltau).
+
+    Kendall's tau is a measure of the correspondence between two rankings.
+    Values close to 1 indicate strong agreement, and values close to -1
+    indicate strong disagreement. This implements two variants of Kendall's
+    tau: tau-b (the default) and tau-c (also known as Stuart's tau-c). These
+    differ only in how they are normalized to lie within the range -1 to 1;
+    the hypothesis tests (their p-values) are identical. Kendall's original
+    tau-a is not implemented separately because both tau-b and tau-c reduce
+    to tau-a in the absence of ties.
+
+    Parameters
+    ----------
+    x, y : array_like
+        Arrays of rankings, of the same shape. If arrays are not 1-D, they
+        will be flattened to 1-D.
+
+    Returns
+    -------
+    correlation : float
+       The tau statistic.
+    pvalue : float
+       The p-value for a hypothesis test whose null hypothesis is
+       an absence of association, tau = 0.
+
+    References
+    --------------
+    [1] Maurice G. Kendall, "A New Measure of Rank Correlation", Biometrika
+           Vol. 30, No. 1/2, pp. 81-93, 1938.
+
+    Examples
+    --------
+    >>> from scipy import stats
+    >>> x1 = [12, 2, 1, 12, 2]
+    >>> tau, p_value = kendall_tau(x1, x2)
+    >>> tau
+    -0.47140452079103173
     """
 
     length = len(predicted_pd)
