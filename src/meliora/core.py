@@ -2149,3 +2149,53 @@ def normal_test(predicted_pd, realised_pd, alpha=0.05):
 
     # create dataframe from inputs
     return pd.DataFrame({"estimate": [estimate], "t_stat": [t_stat], "p_value": [p_value], "outcome": [np.nan]})
+
+
+def redelmeier_test(df):
+    """Redelmeier test for the equality of two binomial proportions.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame with columns 'DEFAULT_FLAG' and 'ADJUSTED_PD'.
+
+    Returns
+    -------
+    z : float
+        The test statistic.
+    p_value : float
+        The p-value for a hypothesis test whose null hypothesis is
+        an absence of association, tau = 0.
+
+    References
+    ----------
+    [1] Redelmeier, D. A. (1996). A test for the equality of two binomial proportions.
+        Statistics in medicine, 15(1), 1-11.
+
+    Examples
+    --------
+    >>> from meliora import redelmeier_test
+    >>> x1 = [0.1, 0.2, 0.3, 0.4, 0.5]  # todo
+    >>> x2 = [0.1, 0.3, 0.3, 0.4, 0.1]
+    >>> z, p_value = redelmeier_test(x1, x2)
+    >>> z
+    -0.47140452079103173
+
+    """
+    pd1 = df["ADJUSTED_PD"]
+    pd2 = df["min_PD"]
+    y = df["DEFAULT_FLAG"]
+
+    t1 = pd1 - pd2
+    t2 = pd1 + pd2
+
+    z = ((pd1**2 - pd2**2) - 2 * t1 * y).sum() / ((t1**2 * t2 * (2 - t1)).sum()) ** 0.5
+
+    p_value = norm.sf(abs(z)) * 2
+
+    if p_value < 0.05:
+        print("reject")
+    else:
+        print("not reject")
+
+    return z, p_value
