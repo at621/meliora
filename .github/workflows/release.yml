@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Existing release tag, for example v0.2.0
+        description: Existing release tag, for example v0.2
         required: true
         type: string
       publish:
@@ -33,7 +33,7 @@ jobs:
         shell: bash
         run: |
           test "$WORKFLOW_REF" = refs/heads/main
-          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]
       - uses: actions/checkout@v7
         with:
           ref: refs/tags/${{ inputs.tag }}

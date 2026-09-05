@@ -32,7 +32,7 @@ from .core import (
     spiegelhalter_test,
 )
 
-__version__ = "0.2.0"
+__version__ = "0.2"
 
 __all__ = [
     "binomial_test",

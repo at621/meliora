@@ -1,6 +1,6 @@
 # Per-method acceptance checklist
 
-Validated for version 0.2.0 on 5 September 2026.
+Validated for version 0.2 on 5 September 2026.
 
 The original audit found that no method met every criterion. All 29 methods now
 meet the eight criteria below for their **documented conventions and tested

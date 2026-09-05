@@ -65,7 +65,7 @@ def main():
     parser.add_argument("--tag", help="Require this release tag to match the built package version")
     args = parser.parse_args()
     if args.tag:
-        assert re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", meliora.__version__), (
+        assert re.fullmatch(r"[0-9]+\.[0-9]+(?:\.[0-9]+)?", meliora.__version__), (
             "Expected a final release version"
         )
         assert args.tag == f"v{meliora.__version__}", "Release tag and package version differ"

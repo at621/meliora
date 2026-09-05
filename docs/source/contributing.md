@@ -12,7 +12,7 @@ Publishing to PyPI is a separate maintainer decision. Do not add credentials or 
 
 ## Preparing and publishing a release
 
-Set the final version in `src/meliora/__init__.py`, update the changelog and point the README and package documentation links at the matching tag. Run the validation commands, merge the changes into `main` and create that tag (for example, `v0.2.0`).
+Set the final version in `src/meliora/__init__.py`, update the changelog and point the README and package documentation links at the matching tag. Run the validation commands, merge the changes into `main` and create that tag (for example, `v0.2`).
 
 In GitHub Actions, run **Release to PyPI** from `main`, enter the tag and leave **Upload the validated packages to PyPI** unchecked. The workflow builds the packages, validates the documentation and examples, and tests the built wheel on Python 3.11–3.14 and Windows. Its `release-distributions` artifact contains the checked packages.
 
