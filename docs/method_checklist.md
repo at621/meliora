@@ -7,14 +7,14 @@ meet the eight criteria below for their **documented conventions and tested
 fixtures**. This is software/formula validation, not regulatory certification or
 proof that asymptotic inference is appropriate for a particular portfolio.
 
-- [x] **M â€” Method explanation:** purpose, formula, assumptions, direction/null where relevant, interpretation, limitations, traceable source.
-- [x] **D â€” Docstring:** real parameter names, domains/defaults, returns, errors, side effects, notes, reference and working example.
-- [x] **N â€” Notebook call:** a real public function call in an identifiable code cell.
-- [x] **W â€” Worked notebook:** fixed data, explanation, asserted expected result, visible output, interpretation and successful clean Run All.
-- [x] **T â€” Regression:** a non-placeholder automated test calls the method and checks numerical results.
-- [x] **R â€” Numerical evidence:** a hand derivation, independent enumeration/integration, or a standard reference matched to the exact fixture and convention.
-- [x] **E â€” Edges/contracts:** relevant boundaries, options, degeneracy, renamed columns, invariants and invalid inputs; every export also checks missing/empty data and non-mutation.
-- [x] **L â€” Documentation link:** method-specific Sphinx page resolves to the actual exported symbol and builds without warnings.
+- [x] **M — Method explanation:** purpose, formula, assumptions, direction/null where relevant, interpretation, limitations, traceable source.
+- [x] **D — Docstring:** real parameter names, domains/defaults, returns, errors, side effects, notes, reference and working example.
+- [x] **N — Notebook call:** a real public function call in an identifiable code cell.
+- [x] **W — Worked notebook:** fixed data, explanation, asserted expected result, visible output, interpretation and successful clean Run All.
+- [x] **T — Regression:** a non-placeholder automated test calls the method and checks numerical results.
+- [x] **R — Numerical evidence:** a hand derivation, independent enumeration/integration, or a standard reference matched to the exact fixture and convention.
+- [x] **E — Edges/contracts:** relevant boundaries, options, degeneracy, renamed columns, invariants and invalid inputs; every export also checks missing/empty data and non-mutation.
+- [x] **L — Documentation link:** method-specific Sphinx page resolves to the actual exported symbol and builds without warnings.
 
 Private helpers have documented internal contracts and coverage through callers;
 they do not need separate user tutorials. M and R include human mathematical
@@ -71,7 +71,7 @@ coverage on Python 3.13. The built wheel also passed all 158 tests with 100%
 coverage on Python 3.11.9 using NumPy 1.26.0, pandas 2.1.0, SciPy 1.11.0 and
 scikit-learn 1.3.0 (the declared dependency floors). The docstring build executed 185 examples without a
 failure; all 29 notebook cells and all 34 Sphinx pages passed. CI checks Python
-3.11â€“3.14 on Linux and 3.13 on Windows; local runs do not substitute for remote CI.
+3.11–3.14 on Linux and 3.13 on Windows; local runs do not substitute for remote CI.
 
 Tolerances use NumPy/pytest floating-point comparisons; exact combinatorial values
 and schemas are checked exactly where appropriate. Near-zero results use explicit
@@ -84,4 +84,4 @@ absolute tolerances. Tests check signed statistics and components, not only sums
 - Hosmer defaults to a fixed-PD test with K degrees of freedom; fitted-logistic callers explicitly select ddof=2.
 - Migration stability returns ECB normal CDFs and NaN for undefined cells. NaN must never be treated as a passed statistical test.
 - IV/PSI smoothing and grade order are explicit; changing these choices can change results.
-- Archived R/research notebooks have not been rerun and are not used as certification evidence. They are outside the supported example set and excluded from distributions.
+- Numerical evidence comes from the regression tests and supported examples. Method documentation links directly to statistical references; historical research files are not required to reproduce the checks.

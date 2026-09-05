@@ -19,8 +19,8 @@ def main():
 
     The optional --write flag refreshes committed example outputs. Each notebook
     receives a fresh kernel using sys.executable and runs from the repository
-    root. Cell errors and timeouts propagate as failures; research archives are
-    explicitly outside the supported example set.
+    root. Cell errors and timeouts propagate as failures. Supported notebooks
+    are the files directly under examples/.
     """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--write", action="store_true", help="Refresh committed notebook outputs")

@@ -35,10 +35,10 @@ Execute every supported notebook from the repository root with:
 python scripts/run_notebooks.py
 ```
 
-The runner uses the current Python interpreter, creates a fresh kernel, and writes results to `.cache/executed/`. Use `--write` to refresh the committed outputs. No external datasets, random seeds, R installation or user kernel configuration are needed. Exploratory notebooks under `examples/research/` are historical material and are excluded from supported examples, CI execution and distributions.
+The runner uses the current Python interpreter, creates a fresh kernel, and writes results to `.cache/executed/`. Use `--write` to refresh the committed outputs. No external datasets, random seeds, R installation or user kernel configuration are needed.
 
 ## Choosing a method
 
 Use calibration tests for PD level errors, AUC/Gini or ordinal measures for discrimination, migration/PSI/concentration metrics for population changes, and paired LGD tests or exposure-weighted errors for LGD validation. A metric without a sampling model has no p-value. A large p-value does not prove model validity. Grade/segment/cell tests do not automatically adjust for multiple testing.
 
-Read each method's assumptions before using a decision threshold. No generic traffic-light cutoffs are applied. Historical threshold drafts are archived under `docs/code/` and are not executable package configuration.
+Read each method's assumptions before using a decision threshold. No generic traffic-light cutoffs are applied.

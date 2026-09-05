@@ -6,6 +6,6 @@ For each public method, add or update its static NumPy-style docstring, method c
 
 Keep examples self-contained and deterministic. Use small fixtures with an auditable derivation, not saved output as the numerical oracle. Expected-value tolerances should reflect floating-point calculations; use absolute tolerance near zero. Do not turn failing numerical tests into placeholders or silently change the statistical hypothesis.
 
-Run `python scripts/run_notebooks.py --write` when intentionally refreshing notebook outputs. Commit source and rendered outputs together. Research notebooks and reference material are explicitly archived and are not release dependencies.
+Run `python scripts/run_notebooks.py --write` when intentionally refreshing notebook outputs. Commit source and rendered outputs together. Keep examples focused on the public API and cite statistical sources directly in method documentation.
 
 Publishing to PyPI is a separate maintainer decision. Do not add credentials or uploads to ordinary test workflows.
