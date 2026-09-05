@@ -1,77 +1,36 @@
-[![PyPI version](https://badge.fury.io/py/meliora.svg)](https://badge.fury.io/py/vangap-meliora) ![CI Build](https://github.com/at621/meliora/actions/workflows/CI.yml/badge.svg?event=push)
+# Meliora
 
-About the package
-------------------
+[![CI](https://github.com/at621/meliora/actions/workflows/CI.yml/badge.svg)](https://github.com/at621/meliora/actions/workflows/CI.yml) [![PyPI](https://badge.fury.io/py/meliora.svg)](https://pypi.org/project/meliora/)
 
-**meliora** is a Python package that provides a set of statistical tests and tools to assess the performance of the credit risk models. All tests are covered with unit tests and algorithms have been replicated in other tools like R, MATLAB and SAS to avoid errors. Whenever possible, the definition of the test was retrieved from the authoritive source like the EBA, the ECB or the Basel Committee.
+Statistical tools for credit-risk model validation: **29 public methods** covering PD calibration, discrimination, ordinal association, population stability, migration and LGD errors.
 
-The main contributors started building their first statistical credit models back in 2003. Over the years, we have impemented similar set of tests in several different financial institutions. 
+This checkout contains **0.2.0.dev0**, with corrected statistical calculations and input handling. PyPI 0.1.2 does not contain these changes. Read the [migration guide](docs/source/migration.md) before comparing results with the previous version.
 
-This package is standing on the shoulders of giants as it makes heavy use of the Python
-ecosystem and especially Scikit-learn, Scipy and Statsmodels. Several functions are straightforward
-wrappers using these resources and are provided to the user for convenience purposes. The authors
-have taken great care to ensure that no part of this package contains proprietary code. 
+```bash
+# Python 3.11 or newer, from a checkout
+python -m pip install -e ".[dev]"
+```
 
-Main aim
------------------
-The aim of the package is to provide all common tests used by today's modellers when developing, maintaining and validating their PD, LGD, EAD and prepayment models. The aim of this package is to provide credit risk practioners with the tools to develop their credit risk models without reinventing the wheel. 
+```python
+import meliora as m
+import pandas as pd
 
-Main Features
------------------
-  - tests cover both IFRS 9 and IRB models as well as non-regulatory models
-  - the tool contains more than 30 tests
-  - all test have been covered with unit tests 
-  - the tests have been documented in detail
-  - commonly accepted tresholds have been provided for convenience purposes
+portfolio = pd.DataFrame({
+    'grade': ['A', 'A', 'B', 'B'],
+    'default': [0, 1, 0, 1],
+    'pd': [.2, .2, .6, .6],
+})
+print(m.brier_score(portfolio, 'grade', 'default', 'pd'))  # 0.30
+```
 
-  For the list of all tests, see Overview > List of tests
+- [Worked Jupyter examples for every method](examples/examples.ipynb): fixed data, formulas, assumptions, checked outputs and interpretation.
+- [Per-method acceptance checklist](docs/method_checklist.md): evidence for all eight criteria.
+- [Method catalogue](docs/method_catalog.json) and [API documentation source](docs/source/index.rst).
+- [Validation commands and numerical evidence](docs/source/validation.md).
+- [Changelog](CHANGELOG.md) and [contribution guide](CONTRIBUTING.md).
 
-Tests that are currently included in the package
---------------------------------------------------
+Run `python -m pytest --cov=meliora` and `python scripts/run_notebooks.py` from the repository root. Build the docs with `python -m sphinx -W -b html docs/source docs/_build/html`.
 
-| #  | Name                                               | Area             | Estimate |
-|----|----------------------------------------------------|------------------|----------|
-| 1  | Binomial test                                      | Calibration      | PD       |
-| 2  | Chi-Square test (Hoshmer-Lemeshow test)            | Calibration      | PD       |
-| 3  | Normal test                                        | Calibration      | PD       |
-| 4  | Spiegehalter test                                  | Calibration      | PD       |
-| 5  | Redelmeier test                                    | Calibration      | PD       |
-| 6  | Herfhindahl index / Concentration of rating grades | Concentration    | PD       |
-| 7  | Brier score                                        | Discrimination   | PD       |
-| 8  | Receiver Operating Characteristic                  | Discrimination   | PD       |
-| 9 | Accuracy Ratio                                     | Discrimination   | PD       |
-| 10 | Kendall’s τ                                        | Discrimination   | PD       |
-| 11 | Somers’ D                                          | Discrimination   | PD       |
-| 12 | Conditional Information Entropy Ratio              | Discrimination   | PD       |
-| 13 | Kullback-Leibler distance                          | Discrimination   | PD       |
-| 14 | Information value                                  | Discrimination   | PD       |
-| 15 | Bayesian error rate                                | Discrimination   | PD       |
-| 16 | Cumulative LGD accuracy ratio                      | Discrimination   | LGD      |
-| 17 | Loss Capture Ratio                                 | Discrimination   | LGD      |
-| 18 | Kolmogorov-Smirnov test                            | Discrimination   | PD       |
-| 19 | Spearman’s rank correlation                        | Discrimination   | LGD      |
-| 20 | Jeffrey's test                                     | Discrimination   | PD       |
-| 21 | ELBE back-test using a t-test                      | Discrimination   | LGD      |
-| 22 | Migration matrices test                            | Discrimination   | PD       |
-| 23 | Loss Shortfall                                     | Predictive power | LGD      |
-| 24 | Mean Absolute Deviation                            | Predictive power | LGD      |
-| 25 | Population Stability Index                         | Stability        | PD       |
-| 26 | Stability of transition matrices                   | Stability        | PD       |
+Runtime dependencies are NumPy, pandas, SciPy and scikit-learn. Inputs are validated and never modified. Each method documents its statistical assumptions; descriptive metrics do not invent p-values or universal acceptance thresholds. The automated suite validates documented formulas and contracts, not regulatory suitability.
 
-Full list of dependencies
----------------------------
-- NumPy (https://www.numpy.org)
-- Pandas (https://pandas.pydata.org/)
-- Statsmodels (https://www.statsmodels.org/)
-- Scikit-learn (https://scikit-learn.org/)
-- Scipy (https://scipy.org/)
-
-
-Getting Help
-------------------
-
-For usage questions, send an email to anton.treialt@aistat.com
-
-License
-----------------------
-MIT License
+Exploratory notebooks are under [examples/research](examples/research/README.md). Historical datasets and reference material remain available in the repository but are excluded from distributions. GitHub CI validates tests, docs, notebooks and builds; it does not publish to PyPI.

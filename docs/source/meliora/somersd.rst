@@ -1,0 +1,4 @@
+somersd
+*******
+
+.. autofunction:: meliora.somersd

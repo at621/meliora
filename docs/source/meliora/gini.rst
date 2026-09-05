@@ -1,0 +1,4 @@
+gini
+====
+
+.. autofunction:: meliora.gini

@@ -1,14 +1,17 @@
 version: 2
 updates:
-- package-ecosystem: pip
-  directory: "/"
-  schedule:
-    interval: daily
-    time: "13:00"
-  open-pull-requests-limit: 10
-  assignees:
-  - dciborow
-  - mattchansky
-  allow:
-  - dependency-type: direct
-  - dependency-type: indirect
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    groups:
+      python-dependencies:
+        patterns: ['*']
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']
