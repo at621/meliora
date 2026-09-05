@@ -1,64 +1,77 @@
-Introduction
-========================================================
+Meliora
+*******
+
+Statistical tools for credit-risk validation. The library contains
+29 public methods, including descriptive metrics and hypothesis tests.
+Method pages state their mathematical conventions and limitations.
 
 .. toctree::
-    :hidden:
-    :maxdepth: 2
-    :caption: Overview
+   :maxdepth: 1
 
-    tests
-    resources
-    contributing
-    usage
-    unit_testing
-   
-   
+   usage
+   validation
+   contributing
+
+Calibration
+-----------
+
 .. toctree::
-    :hidden:
-    :maxdepth: 2
-    :caption: Validation tests
+   :maxdepth: 1
 
-    meliora/meliora
+   meliora/binomial_test
+   meliora/brier_score
+   meliora/hosmer_test
+   meliora/spiegelhalter_test
+   meliora/jeffreys_test
+   meliora/normal_test
+   meliora/redelmeier_test
 
+Discrimination
+--------------
 
-====================
-About the package
-====================
-meliora is a Python package that provides a set of statistical tests and tools to assess the performance of the credit risk models. All tests are covered with unit tests and algorithms have been replicated in other tools like R, MATLAB and SAS to avoid errors. Whenever possible, the definition of the test was retrieved from the authoritive source like the EBA, the ECB or the Basel Committee.
+.. toctree::
+   :maxdepth: 1
 
-The main contributors started building their first statistical credit models back in 2003. Over the years, we have impemented similar set of tests in several different financial institutions.
+   meliora/roc_auc
+   meliora/gini
+   meliora/kolmogorov_smirnov_stat
+   meliora/cumulative_lgd_accuracy_ratio
+   meliora/loss_capture_ratio
+   meliora/bayesian_error_rate
+   meliora/information_value
 
-This package is standing on the shoulders of giants as it makes heavy use of the Python ecosystem and especially Scikit-learn, Scipy and Statsmodels. Several functions are straightforward wrappers using these resources and are provided to the user for convenience purposes. The authors have taken great care to ensure that no part of this package contains proprietary code.
+Association
+-----------
 
-Main aim
------------------
-The aim of this package is to provide credit risk practioners with the tools to develop their credit risk models without the need to implement standard tooling. All tests should be covered with unit tests and algorithms should be replicated using other tools to avoid errors.
+.. toctree::
+   :maxdepth: 1
 
-Main Features
------------------
-  - tests cover both IFRS 9 and IRB models as well as non-regulatory models
-  - the tool contains more than 30 tests
-  - all test have been covered with unit tests 
-  - the tests have been documented in detail
-  - commonly accepted tresholds have been provided for convenience purposes
+   meliora/kendall_tau
+   meliora/somersd
+   meliora/spearman_correlation
+   meliora/pearson_correlation
 
-  For the list of all tests, see Overview > List of tests
-  
+Stability
+---------
 
-Full list of dependencies
----------------------------
-- NumPy (https://www.numpy.org)
-- Pandas (https://pandas.pydata.org/)
-- Statsmodels (https://www.statsmodels.org/)
-- Scikit-learn (https://scikit-learn.org/)
-- Scipy (https://scipy.org/)
+.. toctree::
+   :maxdepth: 1
 
+   meliora/herfindahl_test
+   meliora/herfindahl_multiple_period_test
+   meliora/migration_matrix_stability
+   meliora/population_stability_index
+   meliora/migration_matrices_statistics
+   meliora/conditional_information_entropy_ratio
+   meliora/kullback_leibler_dist
 
-Getting Help
-------------------
+LGD
+---
 
-For usage questions, send an email to anton.treialt@aistat.com
+.. toctree::
+   :maxdepth: 1
 
-License
-----------------------
-MIT LIcense
+   meliora/lgd_t_test
+   meliora/loss_shortfall
+   meliora/mean_absolute_deviation
+   meliora/elbe_t_test
