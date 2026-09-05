@@ -10,4 +10,4 @@
 - Remove unused editor/publishing configuration, stylesheets, redundant documentation build wrappers and the unused Matplotlib dependency. Repair references and retain the supported examples and validation tools.
 - Modernize Python/dependency support and add CI gates for tests, docs, examples and packages. Remove automatic publishing and template synchronization workflows.
 
-The [migration guide](docs/source/migration.md) lists behavioral and API changes. No PyPI release has been made for this development version.
+No PyPI release has been made for this development version.

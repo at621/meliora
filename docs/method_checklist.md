@@ -70,7 +70,7 @@ The corrected suite passed 158 tests with 100% statement and branch
 coverage on Python 3.13. The built wheel also passed all 158 tests with 100%
 coverage on Python 3.11.9 using NumPy 1.26.0, pandas 2.1.0, SciPy 1.11.0 and
 scikit-learn 1.3.0 (the declared dependency floors). The docstring build executed 185 examples without a
-failure; all 29 notebook cells and all 34 Sphinx pages passed. CI checks Python
+failure; all 29 notebook cells and all Sphinx pages passed. CI checks Python
 3.11–3.14 on Linux and 3.13 on Windows; local runs do not substitute for remote CI.
 
 Tolerances use NumPy/pytest floating-point comparisons; exact combinatorial values

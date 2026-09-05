@@ -9,7 +9,6 @@ Method pages state their mathematical conventions and limitations.
    :maxdepth: 1
 
    usage
-   migration
    validation
    contributing
 
