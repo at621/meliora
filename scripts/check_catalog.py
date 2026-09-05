@@ -60,7 +60,10 @@ def main():
         test = tests[entry["test"].split("::")[1]]
         assert ast.get_docstring(test), name
         assert any(isinstance(node, ast.Assert) for node in ast.walk(test)), name
-        reference_link = f"[{entry['title']}](docs/source/meliora/{name}.md)"
+        reference_link = (
+            f"[{entry['title']}](https://github.com/at621/meliora/blob/"
+            f"v{meliora.__version__}/docs/source/meliora/{name}.md)"
+        )
         assert readme.count(reference_link) == 1, (name, "README reference link")
     for path in (ROOT / "src/meliora").glob("*.py"):
         for node in ast.walk(ast.parse(path.read_text(encoding="utf-8-sig"))):

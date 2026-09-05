@@ -9,11 +9,11 @@ python -m sphinx -W --keep-going -b html docs/source docs/_build/html
 python -m sphinx -W -b doctest docs/source docs/_build/doctest
 python scripts/run_notebooks.py
 python -m build
-python -m twine check dist/*
+python -m twine check --strict dist/*
 python scripts/check_distribution.py
 ```
 
-CI runs tests on Python 3.11–3.14 on Linux and Python 3.13 on Windows. Warnings are test failures, and branch coverage must be at least 95%. The catalogue check also verifies that every committed Markdown reference matches its function docstring and has a matching README link. The docs job executes those reference examples, builds the documentation without warnings, runs the notebooks and checks distribution content. CI has read-only repository permissions and no publishing step.
+CI runs tests on Python 3.11–3.14 on Linux and Python 3.13 on Windows. Warnings are test failures, and branch coverage must be at least 95%. The catalogue check also verifies that every committed Markdown reference matches its function docstring and has a matching README link. The docs job executes those reference examples, builds the documentation without warnings, runs the notebooks and checks distribution content. Package checks also render the PyPI description and reject relative links, missing documentation targets or inconsistent version metadata. Ordinary CI has read-only repository permissions and no publishing step; the separate manual release workflow defaults to validation without uploading.
 
 ## Numerical evidence
 

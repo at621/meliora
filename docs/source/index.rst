@@ -1,7 +1,7 @@
 Meliora
 *******
 
-Statistical tools for credit-risk validation. This development version contains
+Statistical tools for credit-risk validation. The library contains
 29 public methods, including descriptive metrics and hypothesis tests.
 Method pages state their mathematical conventions and limitations.
 
