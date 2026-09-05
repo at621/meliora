@@ -8,8 +8,6 @@ python -m venv .venv
 python -m pip install -e ".[dev]"
 ```
 
-The changes documented here are the **0.2.0.dev0 development API**. PyPI 0.1.2 does not include these fixes.
-
 ```python
 import pandas as pd
 import meliora as m

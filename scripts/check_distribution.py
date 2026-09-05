@@ -30,11 +30,14 @@ def main():
                 "tests/test_contracts.py",
                 "docs/method_catalog.json",
                 "docs/method_checklist.md",
+                "docs/README.md",
                 "docs/source/index.rst",
                 "examples/examples.ipynb",
                 "CHANGELOG.md",
             ]:
                 assert required in names, (path.name, required)
+            for page in (ROOT / "docs/source/meliora").glob("*.md"):
+                assert page.relative_to(ROOT).as_posix() in names, (path.name, page.name)
         for name in names:
             assert not name.endswith((".csv", ".pdf", ".docx")), name
             assert not any(part in name.split("/") for part in [".venv", ".cache", ".pypirc", "research"]), (

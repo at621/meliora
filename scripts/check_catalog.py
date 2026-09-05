@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 import nbformat
+from render_reference import check_reference
 
 import meliora
 
@@ -23,6 +24,8 @@ def main():
     names = [entry["name"] for entry in catalogue]
     assert len(names) == len(set(names))
     assert set(names) == set(meliora.__all__)
+    check_reference(catalogue)
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
     notebook = nbformat.read(ROOT / "examples/examples.ipynb", as_version=4)
     cells = {
         cell.metadata["meliora_method"]: cell
@@ -57,15 +60,15 @@ def main():
         test = tests[entry["test"].split("::")[1]]
         assert ast.get_docstring(test), name
         assert any(isinstance(node, ast.Assert) for node in ast.walk(test)), name
-        page = (ROOT / "docs/source/meliora" / (name + ".rst")).read_text(encoding="utf-8")
-        assert f".. autofunction:: meliora.{name}" in page, name
+        reference_link = f"[{entry['title']}](docs/source/meliora/{name}.md)"
+        assert readme.count(reference_link) == 1, (name, "README reference link")
     for path in (ROOT / "src/meliora").glob("*.py"):
         for node in ast.walk(ast.parse(path.read_text(encoding="utf-8-sig"))):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 doc = ast.get_docstring(node)
                 assert doc and "Parameters\n" in doc and "Returns\n" in doc, (path.name, node.name)
     print(
-        f"{len(names)} methods: exports, signatures, docstrings, explained tests, notebook calls and Sphinx pages match"
+        f"{len(names)} methods: exports, signatures, docstrings, tests, notebooks and readable references match"
     )
 
 

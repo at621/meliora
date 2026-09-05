@@ -32,7 +32,8 @@
         "Tail threshold strictly between 0 and 1. Reject for a strictly smaller documented tail probability."
       ]
     },
-    "summary": "Test for underestimated default probability in each grade."
+    "summary": "Test for underestimated default probability in each grade.",
+    "title": "Binomial test"
   },
   {
     "name": "brier_score",
@@ -63,7 +64,8 @@
         "Finite predicted probability column name, values in [0, 1]."
       ]
     },
-    "summary": "Calculate the observation-level mean squared probability error."
+    "summary": "Calculate the observation-level mean squared probability error.",
+    "title": "Brier score"
   },
   {
     "name": "herfindahl_test",
@@ -90,7 +92,8 @@
         "Unique complete grade labels from lowest to highest; unobserved grades are retained. Otherwise use consistent ordered categorical metadata, then naturally sort the observed union. Specify business order explicitly."
       ]
     },
-    "summary": "Measure concentration of one portfolio across rating grades."
+    "summary": "Measure concentration of one portfolio across rating grades.",
+    "title": "Herfindahl index"
   },
   {
     "name": "herfindahl_multiple_period_test",
@@ -125,7 +128,8 @@
         "Unique complete grade labels from lowest to highest; unobserved grades are retained. Otherwise use consistent ordered categorical metadata, then naturally sort the observed union. Specify business order explicitly."
       ]
     },
-    "summary": "Test whether grade concentration increased using the ECB CV statistic."
+    "summary": "Test whether grade concentration increased using the ECB CV statistic.",
+    "title": "Multiple-period Herfindahl test"
   },
   {
     "name": "hosmer_test",
@@ -164,7 +168,8 @@
         "Degrees of freedom deducted from observed grade count K; 0 <= ddof < K. Zero tests fixed external PDs; 2 selects fitted-logistic Hosmer-Lemeshow inference."
       ]
     },
-    "summary": "Apply a grouped chi-square calibration test to grade-level default counts."
+    "summary": "Apply a grouped chi-square calibration test to grade-level default counts.",
+    "title": "Hosmer calibration test"
   },
   {
     "name": "spiegelhalter_test",
@@ -199,7 +204,8 @@
         "Tail threshold strictly between 0 and 1. Reject for a strictly smaller documented tail probability."
       ]
     },
-    "summary": "Test probability calibration with the observation-level Spiegelhalter z statistic."
+    "summary": "Test probability calibration with the observation-level Spiegelhalter z statistic.",
+    "title": "Spiegelhalter test"
   },
   {
     "name": "jeffreys_test",
@@ -234,7 +240,8 @@
         "Tail threshold strictly between 0 and 1. Reject for a strictly smaller documented tail probability."
       ]
     },
-    "summary": "Calculate a Jeffreys-posterior lower-tail probability for each rating grade."
+    "summary": "Calculate a Jeffreys-posterior lower-tail probability for each rating grade.",
+    "title": "Jeffreys test"
   },
   {
     "name": "roc_auc",
@@ -261,7 +268,8 @@
         "Finite numeric score column name. Larger means outcome 1; scores need not be probabilities."
       ]
     },
-    "summary": "Calculate binary ROC area, assigning half credit to tied scores."
+    "summary": "Calculate binary ROC area, assigning half credit to tied scores.",
+    "title": "ROC AUC"
   },
   {
     "name": "gini",
@@ -288,7 +296,8 @@
         "Finite numeric score column name. Larger means outcome 1; scores need not be probabilities."
       ]
     },
-    "summary": "Calculate the normalized discrimination Gini as twice ROC AUC minus one."
+    "summary": "Calculate the normalized discrimination Gini as twice ROC AUC minus one.",
+    "title": "Gini coefficient"
   },
   {
     "name": "kolmogorov_smirnov_stat",
@@ -315,7 +324,8 @@
         "Finite numeric score column name. Larger means outcome 1; scores need not be probabilities."
       ]
     },
-    "summary": "Compare score distributions of the two outcome classes using two-sample KS."
+    "summary": "Compare score distributions of the two outcome classes using two-sample KS.",
+    "title": "Kolmogorov–Smirnov statistic"
   },
   {
     "name": "cumulative_lgd_accuracy_ratio",
@@ -346,7 +356,8 @@
         "Unique complete grade labels from lowest to highest; unobserved grades are retained. Otherwise use consistent ordered categorical metadata, then naturally sort the observed union. Specify business order explicitly."
       ]
     },
-    "summary": "Calculate the VUROCS cumulative LGD accuracy measure for ordinal grades."
+    "summary": "Calculate the VUROCS cumulative LGD accuracy measure for ordinal grades.",
+    "title": "Cumulative LGD accuracy ratio"
   },
   {
     "name": "loss_capture_ratio",
@@ -373,7 +384,8 @@
         "Equal-length finite realised LGD fractions in [0, 1]. Series indices are ignored."
       ]
     },
-    "summary": "Compare model and ideal loss-capture gains using cumulative exposure on the x axis."
+    "summary": "Compare model and ideal loss-capture gains using cumulative exposure on the x axis.",
+    "title": "Loss capture ratio"
   },
   {
     "name": "bayesian_error_rate",
@@ -400,7 +412,8 @@
         "Finite numeric score column name. Larger means outcome 1; unbounded scores are accepted despite the historical name."
       ]
     },
-    "summary": "Find the minimum empirical misclassification rate over score thresholds."
+    "summary": "Find the minimum empirical misclassification rate over score thresholds.",
+    "title": "Bayesian error rate"
   },
   {
     "name": "information_value",
@@ -431,7 +444,8 @@
         "Finite nonnegative pseudo-count added to every contingency cell. Zero requires positive raw cells."
       ]
     },
-    "summary": "Measure separation of pre-binned feature distributions between binary outcomes."
+    "summary": "Measure separation of pre-binned feature distributions between binary outcomes.",
+    "title": "Information value"
   },
   {
     "name": "lgd_t_test",
@@ -466,7 +480,8 @@
         "Required segment column for segment/pool tests; ignored at portfolio level."
       ]
     },
-    "summary": "Test whether mean realised LGD exceeds mean expected LGD using paired errors."
+    "summary": "Test whether mean realised LGD exceeds mean expected LGD using paired errors.",
+    "title": "LGD t-test"
   },
   {
     "name": "migration_matrix_stability",
@@ -497,7 +512,8 @@
         "Unique complete grade labels from lowest to highest; unobserved grades are retained. Otherwise use consistent ordered categorical metadata, then naturally sort the observed union. Specify business order explicitly."
       ]
     },
-    "summary": "Calculate ECB adjacent-cell migration z statistics and their normal CDFs."
+    "summary": "Calculate ECB adjacent-cell migration z statistics and their normal CDFs.",
+    "title": "Migration matrix stability"
   },
   {
     "name": "population_stability_index",
@@ -536,7 +552,8 @@
         "Finite nonnegative pseudo-count added to every contingency cell. Zero requires positive raw cells."
       ]
     },
-    "summary": "Compare two distributions on a common set of pre-defined bins using PSI."
+    "summary": "Compare two distributions on a common set of pre-defined bins using PSI.",
+    "title": "Population stability index"
   },
   {
     "name": "kendall_tau",
@@ -563,7 +580,8 @@
         "Kendall tie normalization."
       ]
     },
-    "summary": "Calculate Kendall ordinal association with the requested tie normalization."
+    "summary": "Calculate Kendall ordinal association with the requested tie normalization.",
+    "title": "Kendall's tau"
   },
   {
     "name": "somersd",
@@ -590,7 +608,8 @@
         "Alternative against zero association: nonzero, negative, or positive."
       ]
     },
-    "summary": "Calculate asymmetric Somers D of the second variable conditional on the first."
+    "summary": "Calculate asymmetric Somers D of the second variable conditional on the first.",
+    "title": "Somers' D"
   },
   {
     "name": "spearman_correlation",
@@ -617,7 +636,8 @@
         "Alternative against zero association: nonzero, negative, or positive."
       ]
     },
-    "summary": "Calculate Spearman rank correlation and an asymptotic association p-value."
+    "summary": "Calculate Spearman rank correlation and an asymptotic association p-value.",
+    "title": "Spearman correlation"
   },
   {
     "name": "pearson_correlation",
@@ -644,7 +664,8 @@
         "Alternative against zero association: nonzero, negative, or positive."
       ]
     },
-    "summary": "Calculate Pearson product-moment correlation and its association p-value."
+    "summary": "Calculate Pearson product-moment correlation and its association p-value.",
+    "title": "Pearson correlation"
   },
   {
     "name": "migration_matrices_statistics",
@@ -675,7 +696,8 @@
         "Unique complete grade labels from lowest to highest; unobserved grades are retained. Otherwise use consistent ordered categorical metadata, then naturally sort the observed union. Specify business order explicitly."
       ]
     },
-    "summary": "Calculate ECB normalized migration-weighted bandwidth above and below the diagonal."
+    "summary": "Calculate ECB normalized migration-weighted bandwidth above and below the diagonal.",
+    "title": "Migration-weighted bandwidth"
   },
   {
     "name": "conditional_information_entropy_ratio",
@@ -702,7 +724,8 @@
         "Nonnegative finite count/weight column with positive total. Zero and fractional weights are allowed."
       ]
     },
-    "summary": "Measure the fraction of marginal default uncertainty explained by grades."
+    "summary": "Measure the fraction of marginal default uncertainty explained by grades.",
+    "title": "Conditional information entropy ratio"
   },
   {
     "name": "kullback_leibler_dist",
@@ -729,7 +752,8 @@
         "Nonnegative finite count/weight column with positive total. Zero and fractional weights are allowed."
       ]
     },
-    "summary": "Calculate mutual information between rating grade and binary default outcome."
+    "summary": "Calculate mutual information between rating grade and binary default outcome.",
+    "title": "Kullback–Leibler information measure"
   },
   {
     "name": "loss_shortfall",
@@ -760,7 +784,8 @@
         "Realised LGD column name, finite fractions in [0, 1]."
       ]
     },
-    "summary": "Calculate relative underestimation of total exposure-weighted monetary loss."
+    "summary": "Calculate relative underestimation of total exposure-weighted monetary loss.",
+    "title": "Loss shortfall"
   },
   {
     "name": "mean_absolute_deviation",
@@ -791,7 +816,8 @@
         "Realised LGD column name, finite fractions in [0, 1]."
       ]
     },
-    "summary": "Calculate the exposure-weighted mean absolute LGD prediction error."
+    "summary": "Calculate the exposure-weighted mean absolute LGD prediction error.",
+    "title": "Mean absolute deviation"
   },
   {
     "name": "elbe_t_test",
@@ -818,7 +844,8 @@
         "Expected loss best estimate column name, finite LGD fractions in [0, 1]."
       ]
     },
-    "summary": "Test equality of mean realised LGD and ELBE using a two-sided paired t test."
+    "summary": "Test equality of mean realised LGD and ELBE using a two-sided paired t test.",
+    "title": "Expected loss best estimate (ELBE) t-test"
   },
   {
     "name": "normal_test",
@@ -845,7 +872,8 @@
         "One-sided significance level strictly between zero and one."
       ]
     },
-    "summary": "Apply the Basel one-sided normal approximation to annual PD forecast errors."
+    "summary": "Apply the Basel one-sided normal approximation to annual PD forecast errors.",
+    "title": "Normal test"
   },
   {
     "name": "redelmeier_test",
@@ -876,6 +904,7 @@
         "Second fixed forecast probability column name, values in [0, 1]."
       ]
     },
-    "summary": "Compare paired Brier losses under an explicit midpoint-Bernoulli null model."
+    "summary": "Compare paired Brier losses under an explicit midpoint-Bernoulli null model.",
+    "title": "Redelmeier-style test"
   }
 ]

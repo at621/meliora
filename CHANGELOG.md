@@ -8,6 +8,7 @@
 - Replace stale examples and placeholder tests with explained numerical regressions, contract checks and a complete executable notebook.
 - Remove unrelated research notebooks, legacy datasets, archived R/MATLAB code and reference-paper copies. Keep statistical source links in method documentation.
 - Remove unused editor/publishing configuration, stylesheets, redundant documentation build wrappers and the unused Matplotlib dependency. Repair references and retain the supported examples and validation tools.
+- Replace the 29 Sphinx method stubs with complete Markdown references readable on GitHub. Add a documentation directory, update README links and check that reference pages stay synchronized with the function docstrings.
 - Modernize Python/dependency support and add CI gates for tests, docs, examples and packages. Remove automatic publishing and template synchronization workflows.
 
 No PyPI release has been made for this development version.

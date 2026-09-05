@@ -13,7 +13,7 @@ python -m twine check dist/*
 python scripts/check_distribution.py
 ```
 
-CI runs tests on Python 3.11–3.14 on Linux and Python 3.13 on Windows. Warnings are test failures, and branch coverage must be at least 95%. The docs job checks catalogue linkage, docstring examples, a warning-free documentation build, notebook execution and distribution content. CI has read-only repository permissions and no publishing step.
+CI runs tests on Python 3.11–3.14 on Linux and Python 3.13 on Windows. Warnings are test failures, and branch coverage must be at least 95%. The catalogue check also verifies that every committed Markdown reference matches its function docstring and has a matching README link. The docs job executes those reference examples, builds the documentation without warnings, runs the notebooks and checks distribution content. CI has read-only repository permissions and no publishing step.
 
 ## Numerical evidence
 

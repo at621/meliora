@@ -37,7 +37,7 @@ dev = ["meliora[test,docs]", "ruff>=0.11", "build>=1.2", "twine>=6"]
 name = "meliora"
 
 [tool.flit.sdist]
-include = ["tests/", "docs/source/", "docs/method_catalog.json", "docs/method_checklist.md", "examples/", "scripts/", "CHANGELOG.md", "CONTRIBUTING.md"]
+include = ["tests/", "docs/source/", "docs/README.md", "docs/method_catalog.json", "docs/method_checklist.md", "examples/", "scripts/", "CHANGELOG.md", "CONTRIBUTING.md"]
 exclude = [".github/", "docs/_build/", "build/", "dist/", "**/__pycache__/", "**/.ipynb_checkpoints/", "**/*.html"]
 
 [tool.pytest.ini_options]
