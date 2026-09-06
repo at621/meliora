@@ -1,6 +1,6 @@
 # Meliora
 
-[![CI](https://github.com/at621/meliora/actions/workflows/CI.yml/badge.svg)](https://github.com/at621/meliora/actions/workflows/CI.yml) [![PyPI](https://badge.fury.io/py/meliora.svg)](https://pypi.org/project/meliora/)
+[![CI](https://github.com/at621/meliora/actions/workflows/CI.yml/badge.svg)](https://github.com/at621/meliora/actions/workflows/CI.yml)
 
 **Meliora is a Python library for developing, validating and monitoring credit-risk models.** It provides statistical tests and performance measures for comparing model predictions with observed defaults and losses, assessing risk rankings, and tracking changes in portfolios.
 
