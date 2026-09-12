@@ -12,6 +12,7 @@ rating models. Use the book for the explanations and Meliora to run the calculat
 | [meliora/__init__.py](meliora/__init__.py) | Exposes the methods through `import meliora as m` |
 | [tests/](tests/) | Checks of numerical results and input handling |
 | [docs/examples/examples.ipynb](docs/examples/examples.ipynb) | 29 worked examples in the book's order |
+| [docs/examples/detailed_examples.ipynb](docs/examples/detailed_examples.ipynb) | 29 detailed case studies with larger synthetic datasets, graphs and interpretation |
 | [docs/reference/](docs/reference/) | Detailed references for all 29 methods |
 | [pyproject.toml](pyproject.toml) | Local installation, dependencies and test settings |
 
@@ -89,6 +90,22 @@ Brier score: 0.300
 ```
 
 The score is the mean squared difference between each predicted PD and its
-observed outcome. The [example notebook](docs/examples/examples.ipynb) covers all 29 methods.
+observed outcome. The [original example notebook](docs/examples/examples.ipynb)
+covers all 29 methods with short API examples. The
+[detailed case-study notebook](docs/examples/detailed_examples.ipynb) covers the
+same methods with 8,000 obligors across eight PD grades, 600 LGD observations,
+24 annual cohorts, migration matrices, and a graph and takeaway for every method.
+All inputs are synthetic and generated inside the notebook; executed outputs are
+included for reading on GitHub.
+
+To run the detailed notebook from a clone of this repository:
+
+```bash
+python -m pip install ".[notebook]"
+python -m jupyter lab docs/examples/detailed_examples.ipynb
+```
+
+Run the setup cells once, then run any numbered example, or restart the kernel and
+run all cells in order.
 
 License: [MIT](LICENSE).

@@ -4,7 +4,11 @@ These pages explain all 29 methods: their arguments, return values, formulas,
 assumptions, examples and statistical sources. Read them directly on GitHub.
 
 See the [package README](../README.md) to install and get started, the
-[notebook](examples/examples.ipynb) for executable examples.
+[original notebook](examples/examples.ipynb) for short executable examples, and the
+[detailed case-study notebook](examples/detailed_examples.ipynb) for larger
+synthetic portfolios, a graph for every method, and interpretations of what each
+result does and does not establish. The detailed notebook covers all 29 methods
+and includes its executed outputs.
 
 ### Calibration
 
