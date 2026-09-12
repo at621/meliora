@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 
 import meliora as m
-from meliora import _validation as v
+from meliora.core import _validate_vector
 
 CREDIT = pd.DataFrame({"g": ["A"] * 4 + ["B"] * 4, "y": [0, 0, 1, 1] * 2, "p": [0.2] * 4 + [0.6] * 4})
 LOSS = pd.DataFrame({"w": [1, 2, 3], "p": [0.1, 0.4, 0.8], "y": [0.2, 0.3, 0.9]})
@@ -135,7 +135,7 @@ def test_association_rejects_constant_or_unpaired_data(name):
 def test_numeric_vectors_reject_nonreal_or_nonnumeric_values(value):
     """Shared conversion must not drop complex components or reinterpret dates."""
     with pytest.raises(ValueError):
-        v.vector(value, "example")
+        _validate_vector(value, "example")
 
 
 def test_dataframe_contract():

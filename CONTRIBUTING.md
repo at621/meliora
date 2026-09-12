@@ -1,5 +1,19 @@
-# Contributing to Meliora
+# Contributing
 
-See the [contribution guide](docs/source/contributing.md) and [validation commands](docs/source/validation.md). Every public statistical method must satisfy the [eight-item checklist](docs/method_checklist.md).
+From the repository root:
 
-Use Python 3.11+ and `python -m pip install -e ".[dev]"`. Run `ruff check .`, `ruff format --check src tests scripts`, the test suite, catalogue check, Sphinx builds, notebook execution and package checks before submitting changes.
+```bash
+python -m pip install -e ".[test]"
+python -m pytest --doctest-modules meliora tests
+```
+
+Input checks and calculations live in `meliora/core.py`. Keep each method's
+implementation, docstring, Markdown reference and notebook
+example consistent. Update the corresponding numerical or input test when its
+behavior changes. The reference index is `docs/README.md`; these are ordinary
+Markdown files edited directly.
+
+The book relies on the 29 public functions. Preserve
+their argument names, defaults and return forms unless a change is intentional
+and the book is updated with it. Run the checks above after changing a calculation.
+Run the notebook's cells when changing its examples.

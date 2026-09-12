@@ -1,0 +1,82 @@
+# Multiple-period Herfindahl test
+
+Test whether grade concentration increased using the ECB CV statistic.
+
+```python
+meliora.herfindahl_multiple_period_test(data1, data2, ratings, alpha_level=0.05, *, rating_order=None)
+```
+
+## Parameters
+
+**`data1`** (pandas.DataFrame)
+
+Nonempty initial/single-period portfolio with a non-missing grade column; not
+modified.
+
+**`data2`** (pandas.DataFrame)
+
+Nonempty current portfolio. Its size may differ from data1; not modified.
+
+**`ratings`** (str)
+
+Name of the non-missing rating-grade column. Calibration grouping uses observed
+grades only.
+
+**`alpha_level`** (float, default 0.05)
+
+Tail threshold strictly between 0 and 1. Reject for a strictly smaller documented
+tail probability.
+
+**`rating_order`** (sequence, optional)
+
+Unique complete grade labels from lowest to highest; unobserved grades are retained.
+Otherwise use consistent ordered categorical metadata, then naturally sort the
+observed union. Specify business order explicitly.
+
+## Returns
+
+**`pandas.DataFrame`**
+
+Grade-indexed N\_initial and N\_current. Summary row total also contains h\_initial, h\_current, z\_stat, p\_value and nullable-boolean reject; other statistic cells are missing.
+
+## Formula, assumptions and interpretation
+
+Use the union of grades, retaining zero counts, or rating\_order. For initial/current CVs
+c1/c2, z=sqrt(K-1)\*(c2-c1)/sqrt(c2\*\*2\*(0.5+c2\*\*2)); p\_value=normal.sf(z). Reject
+increased concentration when p\_value &lt; alpha\_level. This is the ECB asymptotic CV
+comparison; HHI columns use classic squared shares. It is undefined for zero current CV
+and is not a paired-account test.
+
+Non-rejection is not reassurance: some benchmarks make rejection impossible.
+For K=7 and initial CV=0.615681, the minimum possible p-value is about 0.191.
+The tail is not monotone in current concentration and ignores obligor sample size.
+
+## Example
+
+```pycon
+>>> import numpy as np
+>>> import pandas as pd
+>>> import meliora as m
+>>> initial = pd.DataFrame({'grade': ['A'] * 4 + ['B'] * 2})
+>>> current = pd.DataFrame({'grade': ['A'] * 5 + ['B']})
+>>> result = m.herfindahl_multiple_period_test(initial, current, 'grade')
+>>> assert np.isclose(result.loc['total', 'z_stat'], 3 / np.sqrt(34))
+>>> assert np.isclose(result.loc['total', 'h_current'], 26 / 36)
+```
+
+Concentration increased, but this statistic does not reject at 5%. Six accounts illustrate arithmetic only.
+
+## Exceptions
+
+**`ValueError`**
+
+Invalid data/order/alpha, fewer than two grades, uniform current shares, or reserved
+grade label 'total'.
+
+**`TypeError`**
+
+If a required table is not a pandas DataFrame.
+
+## References
+
+- [Statistical reference 1](https://www.bankingsupervision.europa.eu/activities/internal_models/shared/pdf/instructions_validation_reporting_credit_risk.en.pdf)

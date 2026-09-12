@@ -492,3 +492,26 @@ def test_redelmeier_test(capsys):
     assert m.redelmeier_test(default) == (z, p)
     assert m.redelmeier_test(default.assign(min_PD=default.ADJUSTED_PD)) == (0, 1)
     assert capsys.readouterr().out == ""
+
+
+def test_declared_empty_bins_affect_only_explicit_policy():
+    d = pd.DataFrame({"period": ["old"] * 4 + ["new"] * 4, "bin": ["A", "A", "A", "B", "A", "B", "B", "B"]})
+    _, old = m.population_stability_index(d, "period", "bin", expected="old", actual="new")
+    _, new = m.population_stability_index(
+        d, "period", "bin", expected="old", actual="new", bin_order=["A", "B", "C"]
+    )
+    assert old == pytest.approx(0.677838288309763)
+    assert new == pytest.approx(old * 5 / 5.5)
+    iv = d.rename(columns={"period": "y"}).assign(y=[0] * 4 + [1] * 4)
+    assert m.information_value(iv, "bin", "y", bin_order=["A", "B", "C"])[1] == pytest.approx(new)
+    with pytest.raises(ValueError):
+        m.information_value(iv, "bin", "y", bin_order=["A", "B", "C"], smoothing=0)
+    with pytest.raises(ValueError):
+        m.population_stability_index(
+            d, "period", "bin", expected="old", actual="new", bin_order=["A", "B", "C"], smoothing=0
+        )
+
+
+def test_legacy_clar_constant_lowest_score_is_not_discrimination():
+    d = pd.DataFrame({"p": [1, 1, 1, 1], "y": [1, 2, 3, 4]})
+    assert m.cumulative_lgd_accuracy_ratio(d, "p", "y", rating_order=[1, 2, 3, 4]) == 1

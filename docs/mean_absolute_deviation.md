@@ -1,0 +1,65 @@
+# Mean absolute deviation
+
+Calculate the exposure-weighted mean absolute LGD prediction error.
+
+```python
+meliora.mean_absolute_deviation(data, ead, predicted_lgd, realised_lgd)
+```
+
+## Parameters
+
+**`data`** (pandas.DataFrame)
+
+Nonempty table with unique columns and no missing required values. Extra columns are
+ignored; input is not modified.
+
+**`ead`** (str)
+
+Finite nonnegative exposure column name, with positive total.
+
+**`predicted_lgd`** (str)
+
+Predicted LGD column name, finite fractions in [0, 1].
+
+**`realised_lgd`** (str)
+
+Realised LGD column name, finite fractions in [0, 1].
+
+## Returns
+
+**`float`**
+
+Exposure-weighted mean absolute LGD error in [0, 1].
+
+## Formula, assumptions and interpretation
+
+MAD=sum(EAD\*abs(realised-predicted LGD))/sum(EAD). Zero exposures do not contribute.
+Both LGDs use [0,1] fractions. This descriptive score measures error magnitude without
+cancellation; no hypothesis or p-value applies.
+
+## Example
+
+```pycon
+>>> import numpy as np
+>>> import pandas as pd
+>>> import meliora as m
+>>> data = pd.DataFrame({'ead': [100, 200, 100, 100], 'predicted': [.2, .4, .6, .8], 'realised': [.1, .5, .4, .9], 'segment': ['A', 'A', 'B', 'B']})
+>>> result = m.mean_absolute_deviation(data, 'ead', 'predicted', 'realised')
+>>> assert np.isclose(result, .12)
+```
+
+Absolute monetary error is 60 on EAD 500: MAD=0.12, or 12 LGD percentage points.
+
+## Exceptions
+
+**`ValueError`**
+
+Invalid columns/LGDs/exposures, negative EAD or nonpositive total EAD.
+
+**`TypeError`**
+
+If a required table is not a pandas DataFrame.
+
+## References
+
+- [Statistical reference 1](https://www.bis.org/publ/bcbs_wp14.pdf)

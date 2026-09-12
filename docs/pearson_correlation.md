@@ -1,0 +1,58 @@
+# Pearson correlation
+
+Calculate Pearson product-moment correlation and its association p-value.
+
+```python
+meliora.pearson_correlation(array_1, array_2, *, alternative='two-sided')
+```
+
+## Parameters
+
+**`array_1`** (array-like)
+
+Finite nonconstant one-dimensional numeric vector, paired by position with array\_2.
+
+**`array_2`** (array-like)
+
+Equal-length finite nonconstant numeric vector; Series indices are ignored.
+
+**`alternative`** ({'two-sided', 'less', 'greater'}, default 'two-sided')
+
+Alternative against zero association: nonzero, negative, or positive.
+
+## Returns
+
+**`object`**
+
+SciPy PearsonRResult with statistic, pvalue and standard result methods.
+
+## Formula, assumptions and interpretation
+
+Pearson r is the centered cross-product divided by the product of centered Euclidean
+norms, in [-1,1]. Calculation does not require normality; SciPy default p-values assume
+independent bivariate-normal pairs under zero correlation. Near-constant inputs can emit
+SciPy NearConstantInputWarning; inspect and rescale data. Alternatives are two-sided,
+less or greater.
+
+## Example
+
+```pycon
+>>> import numpy as np
+>>> import pandas as pd
+>>> import meliora as m
+>>> result = m.pearson_correlation([1, 2, 3, 4], [1, 2, 4, 8])
+>>> assert np.isclose(result.statistic, 11.5 / np.sqrt(143.75))
+>>> assert result.statistic < 1
+```
+
+Pearson r is about 0.959, below Spearman r=1: monotone does not imply exactly linear.
+
+## Exceptions
+
+**`ValueError`**
+
+Invalid alternative/vectors, fewer than two pairs, or constant inputs.
+
+## References
+
+- [Statistical reference 1](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.pearsonr.html)

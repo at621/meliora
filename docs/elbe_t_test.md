@@ -1,0 +1,64 @@
+# Expected loss best estimate (ELBE) t-test
+
+Test equality of mean realised LGD and ELBE using a two-sided paired t test.
+
+```python
+meliora.elbe_t_test(df, lgd, elbe)
+```
+
+## Parameters
+
+**`df`** (pandas.DataFrame)
+
+Nonempty table with unique columns and no missing required values. Extra columns are
+ignored; input is not modified.
+
+**`lgd`** (str)
+
+Realised LGD column name, finite fractions in [0, 1].
+
+**`elbe`** (str)
+
+Expected loss best estimate column name, finite LGD fractions in [0, 1].
+
+## Returns
+
+**`pandas.DataFrame`**
+
+One row: facilities, lgd\_mean (realised), elbe\_mean (predicted), t\_stat, p\_value.
+
+## Formula, assumptions and interpretation
+
+For paired realised LGD minus ELBE errors, t=mean(error)/sqrt(sample\_variance(error)/N).
+Return a two-sided t p-value with N-1 degrees of freedom. Null: zero mean paired error.
+Independent normal errors support finite-sample inference; each facility has equal
+weight. Small p-values can indicate either underestimation or overestimation.
+
+## Example
+
+```pycon
+>>> import numpy as np
+>>> import pandas as pd
+>>> import meliora as m
+>>> data = pd.DataFrame({'ead': [100, 200, 100, 100], 'predicted': [.2, .4, .6, .8], 'realised': [.1, .5, .4, .9], 'segment': ['A', 'A', 'B', 'B']})
+>>> result = m.elbe_t_test(data, 'realised', 'predicted')
+>>> assert np.isclose(result.lgd_mean.iloc[0], .475)
+>>> assert result.t_stat.iloc[0] < 0
+>>> assert 0 < result.p_value.iloc[0] < 1
+```
+
+Realised mean LGD is 0.475 versus ELBE 0.5. This equal-facility test differs from an exposure-weighted score.
+
+## Exceptions
+
+**`ValueError`**
+
+Invalid columns/LGDs, fewer than two pairs, or zero error variance.
+
+**`TypeError`**
+
+If a required table is not a pandas DataFrame.
+
+## References
+
+- [Statistical reference 1](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_rel.html)

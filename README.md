@@ -1,80 +1,95 @@
 # Meliora
 
-[![CI](https://github.com/at621/meliora/actions/workflows/CI.yml/badge.svg)](https://github.com/at621/meliora/actions/workflows/CI.yml)
+Meliora accompanies *Statistical Tests for Credit Risk*. It contains 29 statistical
+tests and measures for probability of default (PD), loss given default (LGD) and
+rating models. Use the book for the explanations and Meliora to run the calculations.
 
-**Meliora is a Python library for developing, validating and monitoring credit-risk models.** It provides statistical tests and performance measures for comparing model predictions with observed defaults and losses, assessing risk rankings, and tracking changes in portfolios.
+## Contents
 
-The library is intended for credit-risk modellers, validators and researchers working with **probability of default (PD)** and **loss given default (LGD)** models in IRB, IFRS 9 and other credit-risk settings. Its aim is to provide commonly used validation methods in one documented toolkit, reducing the need to implement the same calculations repeatedly.
+| File or folder | Contents |
+|---|---|
+| [meliora/core.py](meliora/core.py) | All 29 methods and their input checks |
+| [meliora/__init__.py](meliora/__init__.py) | Exposes the methods through `import meliora as m` |
+| [tests/](tests/) | Checks of numerical results and input handling |
+| [examples.ipynb](examples.ipynb) | One executable example for every method |
+| [docs/](docs/README.md) | Detailed reference pages for all 29 methods |
+| [pyproject.toml](pyproject.toml) | Local installation, dependencies and test settings |
 
-## Tests and performance measures
+## The 29 methods
 
-Meliora includes the following **29 tests and measures**. Each has documented assumptions, automated tests and a worked Jupyter notebook example.
+Names, order and areas follow the book. The estimate column reflects the book's
+worked examples. Select a method name for its detailed reference and sources.
 
-| # | Test or measure | Purpose |
-|---|---|---|
-| 1 | [Binomial test](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/binomial_test.md) | Test whether grade PDs underestimate observed defaults. |
-| 2 | [Jeffreys test](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/jeffreys_test.md) | Assess grade PDs using a Bayesian posterior distribution. |
-| 3 | [Hosmer calibration test](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/hosmer_test.md) | Compare observed and expected defaults across grades. |
-| 4 | [Spiegelhalter test](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/spiegelhalter_test.md) | Assess calibration of individual PD forecasts. |
-| 5 | [Normal test](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/normal_test.md) | Test for underestimation in annual PD forecasts. |
-| 6 | [Brier score](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/brier_score.md) | Measure the squared error of probability forecasts. |
-| 7 | [Redelmeier-style test](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/redelmeier_test.md) | Compare two sets of paired probability forecasts. |
-| 8 | [ROC AUC](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/roc_auc.md) | Measure how well scores distinguish defaults from non-defaults. |
-| 9 | [Gini coefficient](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/gini.md) | Express discrimination on a scale derived from ROC AUC. |
-| 10 | [Kolmogorov–Smirnov statistic](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/kolmogorov_smirnov_stat.md) | Compare score distributions for defaults and non-defaults. |
-| 11 | [Bayesian error rate](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/bayesian_error_rate.md) | Find the lowest empirical classification error across score thresholds. |
-| 12 | [Information value](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/information_value.md) | Measure how a binned feature separates defaults and non-defaults. |
-| 13 | [Kendall's tau](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/kendall_tau.md) | Measure agreement between rankings, accounting for ties. |
-| 14 | [Somers' D](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/somersd.md) | Measure directional association between rankings. |
-| 15 | [Spearman correlation](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/spearman_correlation.md) | Measure monotone association between two variables. |
-| 16 | [Pearson correlation](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/pearson_correlation.md) | Measure linear association between two variables. |
-| 17 | [Cumulative LGD accuracy ratio](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/cumulative_lgd_accuracy_ratio.md) | Assess agreement between predicted and realised loss grades. |
-| 18 | [Loss capture ratio](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/loss_capture_ratio.md) | Assess loss rankings using exposure-weighted loss curves. |
-| 19 | [LGD t-test](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/lgd_t_test.md) | Test whether realised LGD exceeds expected LGD on average. |
-| 20 | [Expected loss best estimate (ELBE) t-test](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/elbe_t_test.md) | Test the mean difference between realised LGD and ELBE. |
-| 21 | [Loss shortfall](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/loss_shortfall.md) | Measure relative underestimation of total monetary loss. |
-| 22 | [Mean absolute deviation](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/mean_absolute_deviation.md) | Measure exposure-weighted absolute LGD prediction errors. |
-| 23 | [Herfindahl index](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/herfindahl_test.md) | Measure concentration across rating grades. |
-| 24 | [Multiple-period Herfindahl test](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/herfindahl_multiple_period_test.md) | Test whether grade concentration has increased. |
-| 25 | [Population stability index](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/population_stability_index.md) | Measure changes in a variable's distribution between two samples. |
-| 26 | [Migration-weighted bandwidth](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/migration_matrices_statistics.md) | Measure the distance of rating migrations in each direction. |
-| 27 | [Migration matrix stability](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/migration_matrix_stability.md) | Assess the pattern of probabilities around a migration matrix's diagonal. |
-| 28 | [Conditional information entropy ratio](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/conditional_information_entropy_ratio.md) | Measure the share of default uncertainty explained by grades. |
-| 29 | [Kullback–Leibler information measure](https://github.com/at621/meliora/blob/v0.2/docs/source/meliora/kullback_leibler_dist.md) | Measure information about defaults contained in rating grades. |
+| # | Method | Area | Estimate | Explanation |
+|---|---|---|---|---|
+| 1 | [ROC AUC](docs/roc_auc.md) | Discrimination | PD | Measures how well a score ranks defaulters above survivors. |
+| 2 | [Gini coefficient](docs/gini.md) | Discrimination | PD | Rescales ROC AUC into an accuracy ratio, with zero for random ranking and one for perfect ranking. |
+| 3 | [Kolmogorov-Smirnov statistic](docs/kolmogorov_smirnov_stat.md) | Discrimination | PD | Measures the largest gap between the score distributions of defaulters and survivors. |
+| 4 | [Minimum empirical threshold error](docs/bayesian_error_rate.md) | Discrimination | PD | Finds the lowest classification error across score cut-offs, giving false alarms and missed defaults equal cost. |
+| 5 | [Information value](docs/information_value.md) | Discrimination | PD | Measures how differently defaulters and survivors are distributed across grades or bins. |
+| 6 | [Conditional information entropy ratio](docs/conditional_information_entropy_ratio.md) | Discrimination | PD | Measures the share of uncertainty about default removed by knowing the rating grade. |
+| 7 | [Mutual information](docs/kullback_leibler_dist.md) | Discrimination | PD | Measures the reduction in uncertainty about default from knowing the grade, expressed in nats. |
+| 8 | [Cumulative LGD accuracy ratio](docs/cumulative_lgd_accuracy_ratio.md) | Discrimination | LGD | Summarises asymmetric agreement between predicted and realised loss grades across grade thresholds. |
+| 9 | [Loss capture ratio](docs/loss_capture_ratio.md) | Discrimination | LGD | Measures how quickly realised monetary losses accumulate when facilities are ordered by predicted LGD. |
+| 10 | [Binomial test](docs/binomial_test.md) | Calibration | PD | Tests whether a grade PD is too low relative to its observed number of defaults. |
+| 11 | [Jeffreys test](docs/jeffreys_test.md) | Calibration | PD | Assesses PD underestimation using a Jeffreys posterior for the grade default rate. |
+| 12 | [Hosmer test](docs/hosmer_test.md) | Calibration | PD | Jointly compares fixed grade PDs with observed default counts using a chi-square statistic. |
+| 13 | [Spiegelhalter test](docs/spiegelhalter_test.md) | Calibration | PD | Compares squared forecast errors with their expectation under calibrated PDs. |
+| 14 | [Brier score](docs/brier_score.md) | Calibration | PD | Measures the mean squared difference between predicted PDs and observed default outcomes. |
+| 15 | [Redelmeier test](docs/redelmeier_test.md) | Calibration | PD | Compares paired Brier scores under the assumption that each true PD is the midpoint of the two forecasts. |
+| 16 | [Normal test for annual default rates](docs/normal_test.md) | Calibration | PD | Tests whether realised portfolio default rates exceed predicted rates on average across years. |
+| 17 | [Kendall's tau](docs/kendall_tau.md) | Association | LGD | Measures agreement between predicted and realised rankings by comparing concordant and discordant pairs. |
+| 18 | [Somers' D](docs/somersd.md) | Association | LGD | Measures how well realised outcomes support the ordering of pairs distinguished by the predictions. |
+| 19 | [Spearman's rho](docs/spearman_correlation.md) | Association | LGD | Measures association between predicted and realised LGD using their ranks. |
+| 20 | [Pearson's r](docs/pearson_correlation.md) | Association | LGD | Measures linear association between predicted and realised LGD using their numerical values. |
+| 21 | [Herfindahl index](docs/herfindahl_test.md) | Stability | PD | Measures how concentrated the portfolio is across rating grades. |
+| 22 | [Multiple-period Herfindahl test](docs/herfindahl_multiple_period_test.md) | Stability | PD | Compares current grade concentration with a fixed development benchmark using the ECB statistic. |
+| 23 | [Population stability index](docs/population_stability_index.md) | Stability | PD | Measures the change in grade or bin proportions between two samples. |
+| 24 | [Migration bandwidth](docs/migration_matrices_statistics.md) | Stability | PD | Measures migration distances relative to possible distances, separately for upgrades and downgrades. |
+| 25 | [Adjacent-cell shape checks](docs/migration_matrix_stability.md) | Stability | PD | Checks whether transition probabilities decline away from the diagonal within one migration matrix. |
+| 26 | [LGD t-test](docs/lgd_t_test.md) | LGD validation | LGD | Tests whether mean realised LGD exceeds mean predicted LGD on completed default episodes. |
+| 27 | [ELBE t-test](docs/elbe_t_test.md) | LGD validation | LGD | Tests whether mean realised loss differs from the expected loss best estimate in either direction. |
+| 28 | [Loss shortfall](docs/loss_shortfall.md) | LGD validation | LGD | Measures the gap between realised and predicted monetary losses as a fraction of realised loss. |
+| 29 | [Exposure-weighted mean absolute error](docs/mean_absolute_deviation.md) | LGD validation | LGD | Measures the size of individual LGD forecast errors, weighted by exposure, without cancelling opposite errors. |
 
-## Installation
+## One example: Brier score
 
-Requires **Python 3.11 or newer**. Install from PyPI:
+Install Meliora from the repository root:
 
 ```bash
-python -m pip install meliora
+python -m pip install .
 ```
 
-To install from a checkout of this repository, use `python -m pip install .`.
+This small example compares predicted probabilities of default (PDs) with observed
+outcomes. A default is recorded as 1 and a non-default as 0.
 
-NumPy, pandas, SciPy and scikit-learn are installed as dependencies.
+```python
+import pandas as pd
+import meliora as m
 
-## Documentation and examples
+portfolio = pd.DataFrame({
+    "grade": ["A", "A", "B", "B"],
+    "default": [0, 1, 0, 1],
+    "pd": [0.2, 0.2, 0.6, 0.6],
+})
 
-The [example notebook](https://github.com/at621/meliora/blob/v0.2/examples/examples.ipynb) covers every method with reproducible data, expected results and interpretation. Statistical definitions, assumptions and references are documented alongside each method.
+score = m.brier_score(
+    portfolio,
+    ratings="grade",
+    default_flag="default",
+    predicted_pd="pd",
+)
+print(f"Brier score: {score:.3f}")
+```
 
-- [Usage instructions](https://github.com/at621/meliora/blob/v0.2/docs/source/usage.md)
-- [Method reference](https://github.com/at621/meliora/blob/v0.2/docs/README.md)
-- [Validation checklist and numerical evidence](https://github.com/at621/meliora/blob/v0.2/docs/method_checklist.md)
-- [Release notes](https://github.com/at621/meliora/blob/v0.2/CHANGELOG.md)
+Output:
 
-## Project background and aims
+```text
+Brier score: 0.300
+```
 
-Meliora grew out of its contributors' experience developing statistical credit models at financial institutions, dating back to 2003. Its methods draw on the statistical literature and, where applicable, validation material from the Basel Committee and the ECB.
+The score is the mean squared difference between each predicted PD and its
+observed outcome. The [example notebook](examples.ipynb) covers all 29 methods.
 
-The broader aim is to support common validation tasks across PD, LGD, exposure at default (EAD) and prepayment models. The current methods focus on PD, LGD, association and portfolio stability.
-
-## Help and contributions
-
-For questions and bug reports, [open a GitHub issue](https://github.com/at621/meliora/issues) or contact [anton.treialt@aistat.com](mailto:anton.treialt@aistat.com).
-
-Contributions to methods, documentation and examples are welcome. See the [contribution guide](https://github.com/at621/meliora/blob/v0.2/CONTRIBUTING.md) for the development setup and validation requirements.
-
-## License
-
-Meliora is released under the [MIT License](https://github.com/at621/meliora/blob/v0.2/LICENSE).
+For development and testing, see [CONTRIBUTING.md](CONTRIBUTING.md).
+License: [MIT](LICENSE).
