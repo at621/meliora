@@ -11,8 +11,8 @@ rating models. Use the book for the explanations and Meliora to run the calculat
 | [meliora/core.py](meliora/core.py) | All 29 methods and their input checks |
 | [meliora/__init__.py](meliora/__init__.py) | Exposes the methods through `import meliora as m` |
 | [tests/](tests/) | Checks of numerical results and input handling |
-| [examples.ipynb](examples.ipynb) | One executable example for every method |
-| [docs/](docs/README.md) | Detailed reference pages for all 29 methods |
+| [docs/examples.ipynb](docs/examples.ipynb) | 29 worked examples in the book's order |
+| [docs/](docs/README.md) | Method references and the worked-example notebook |
 | [pyproject.toml](pyproject.toml) | Local installation, dependencies and test settings |
 
 ## The 29 methods
@@ -60,8 +60,8 @@ Install Meliora from the repository root:
 python -m pip install .
 ```
 
-This small example compares predicted probabilities of default (PDs) with observed
-outcomes. A default is recorded as 1 and a non-default as 0.
+pandas creates the input table; Meliora calculates the Brier score. Each PD is
+compared with an observed outcome: 1 for a default and 0 for a non-default.
 
 ```python
 import pandas as pd
@@ -89,7 +89,6 @@ Brier score: 0.300
 ```
 
 The score is the mean squared difference between each predicted PD and its
-observed outcome. The [example notebook](examples.ipynb) covers all 29 methods.
+observed outcome. The [example notebook](docs/examples.ipynb) covers all 29 methods.
 
-For development and testing, see [CONTRIBUTING.md](CONTRIBUTING.md).
 License: [MIT](LICENSE).

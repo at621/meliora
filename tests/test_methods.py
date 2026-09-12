@@ -515,3 +515,219 @@ def test_declared_empty_bins_affect_only_explicit_policy():
 def test_legacy_clar_constant_lowest_score_is_not_discrimination():
     d = pd.DataFrame({"p": [1, 1, 1, 1], "y": [1, 2, 3, 4]})
     assert m.cumulative_lgd_accuracy_ratio(d, "p", "y", rating_order=[1, 2, 3, 4]) == 1
+
+
+def test_worked_example_binomial_test():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'grade': ['A'] * 4 + ['B'] * 4, 'outcome': [0, 0, 1, 1] * 2, 'pd': [0.2] * 4 + [0.6] * 4})
+    result = m.binomial_test(data, 'grade', 'outcome', 'pd')
+    assert np.allclose(result.p_value, [0.1808, 0.8208])
+    assert result['Reject H0'].tolist() == [False, False]
+
+
+def test_worked_example_brier_score():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'grade': ['A'] * 4 + ['B'] * 4, 'outcome': [0, 0, 1, 1] * 2, 'pd': [0.2] * 4 + [0.6] * 4})
+    result = m.brier_score(data, 'grade', 'outcome', 'pd')
+    assert np.isclose(result, 0.3)
+
+
+def test_worked_example_herfindahl_test():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'grade': ['A'] * 4 + ['B'] * 2})
+    result = m.herfindahl_test(data, 'grade')
+    assert np.allclose(result, [1 / 3, 5 / 9])
+
+
+def test_worked_example_herfindahl_multiple_period_test():
+    """Preserve the numerical expectations from the published worked example."""
+    initial = pd.DataFrame({'grade': ['A'] * 4 + ['B'] * 2})
+    current = pd.DataFrame({'grade': ['A'] * 5 + ['B']})
+    result = m.herfindahl_multiple_period_test(initial, current, 'grade')
+    assert np.isclose(result.loc['total', 'z_stat'], 3 / np.sqrt(34))
+    assert np.isclose(result.loc['total', 'h_current'], 26 / 36)
+
+
+def test_worked_example_hosmer_test():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'grade': ['A'] * 4 + ['B'] * 4, 'outcome': [0, 0, 1, 1] * 2, 'pd': [0.2] * 4 + [0.6] * 4})
+    result = m.hosmer_test(data, 'grade', 'outcome', 'pd')
+    assert np.isclose(result[0], np.exp(-(2.25 + 1 / 6) / 2))
+    assert result[1] is False
+
+
+def test_worked_example_spiegelhalter_test():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'grade': ['A'] * 4 + ['B'] * 4, 'outcome': [0, 0, 1, 1] * 2, 'pd': [0.2] * 4 + [0.6] * 4})
+    result = m.spiegelhalter_test(data, 'grade', 'outcome', 'pd')
+    assert np.isclose(result[0], 0.8 / np.sqrt(0.2688))
+    assert result[1] is False
+
+
+def test_worked_example_jeffreys_test():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'grade': ['A'] * 4, 'outcome': [0, 0, 1, 1], 'pd': [0.5] * 4})
+    result = m.jeffreys_test(data, 'grade', 'outcome', 'pd')
+    assert np.isclose(result.p_value.iloc[0], 0.5)
+
+
+def test_worked_example_roc_auc():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'y': [0, 0, 1, 1], 'score': [1, 2, 2, 3]})
+    result = m.roc_auc(data, 'y', 'score')
+    assert np.isclose(result, 0.875)
+
+
+def test_worked_example_gini():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'y': [0, 0, 1, 1], 'score': [1, 2, 2, 3]})
+    result = m.gini(data, 'y', 'score')
+    assert np.isclose(result, 0.75)
+
+
+def test_worked_example_kolmogorov_smirnov_stat():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'y': [0, 0, 1, 1], 'score': [1, 2, 3, 4]})
+    result = m.kolmogorov_smirnov_stat(data, 'y', 'score')
+    assert np.isclose(result.statistic, 1)
+    assert np.isclose(result.pvalue, 1 / 3)
+
+
+def test_worked_example_cumulative_lgd_accuracy_ratio():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'p': [1, 2, 3, 3, 4], 'y': [1, 3, 2, 4, 4]})
+    result = m.cumulative_lgd_accuracy_ratio(data, 'p', 'y')
+    assert np.isclose(result, 0.88)
+    constant = m.cumulative_lgd_accuracy_ratio(data.assign(p=1), 'p', 'y')
+    assert constant == 1.0
+
+
+def test_worked_example_loss_capture_ratio():
+    """Preserve the numerical expectations from the published worked example."""
+    result = m.loss_capture_ratio([1, 1, 1], [0.1, 0.4, 0.9], [0.1, 0.4, 0.9])
+    assert np.isclose(result, 1)
+
+
+def test_worked_example_bayesian_error_rate():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'y': [0, 0, 1, 1], 'score': [1, 2, 2, 3]})
+    result = m.bayesian_error_rate(data, 'y', 'score')
+    assert np.isclose(result, 0.25)
+
+
+def test_worked_example_information_value():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'bin': ['A'] * 4 + ['B'] * 4, 'y': [0, 0, 0, 1, 0, 1, 1, 1]})
+    result = m.information_value(data, 'bin', 'y', smoothing=0)
+    assert np.isclose(result[1], np.log(3))
+    assert np.allclose(result[0][['good_share', 'bad_share']].sum(), 1)
+
+
+def test_worked_example_lgd_t_test():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'ead': [100, 200, 100, 100], 'predicted': [0.2, 0.4, 0.6, 0.8], 'realised': [0.1, 0.5, 0.4, 0.9], 'segment': ['A', 'A', 'B', 'B']})
+    result = m.lgd_t_test(data, 'realised', 'predicted', level='segment', segment_col='segment')
+    assert result.segment.tolist() == ['A', 'B']
+    assert np.isclose(result.loc[0, 'p_value'], 0.5)
+    assert result.loc[1, 't_stat'] < 0
+
+
+def test_worked_example_migration_matrix_stability():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'start': [1] * 4 + [2] * 4 + [3] * 4, 'end': [1, 1, 2, 3, 1, 2, 2, 3, 1, 2, 3, 3]})
+    result = m.migration_matrix_stability(data, 'start', 'end')
+    assert np.isclose(result[0].loc[1, 2], 2 / np.sqrt(11))
+    assert np.isnan(np.diag(result[0])).all()
+
+
+def test_worked_example_population_stability_index():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'period': ['old'] * 4 + ['new'] * 4, 'bin': ['A', 'A', 'A', 'B', 'A', 'B', 'B', 'B']})
+    result = m.population_stability_index(data, 'period', 'bin', expected='old', actual='new', smoothing=0)
+    assert np.isclose(result[1], np.log(3))
+    assert np.allclose(result[0][['expected', 'actual']].sum(), 1)
+
+
+def test_worked_example_kendall_tau():
+    """Preserve the numerical expectations from the published worked example."""
+    result = m.kendall_tau([1, 2, 3, 4], [1, 2, 4, 8])
+    assert np.isclose(result[0], 1)
+    assert np.isclose(result[1], 1 / 12)
+
+
+def test_worked_example_somersd():
+    """Preserve the numerical expectations from the published worked example."""
+    result = m.somersd([[3, 1], [1, 3]])
+    assert np.isclose(result.statistic, 0.5)
+
+
+def test_worked_example_spearman_correlation():
+    """Preserve the numerical expectations from the published worked example."""
+    result = m.spearman_correlation([1, 2, 3, 4], [1, 2, 4, 8])
+    assert np.isclose(result.statistic, 1)
+
+
+def test_worked_example_pearson_correlation():
+    """Preserve the numerical expectations from the published worked example."""
+    result = m.pearson_correlation([1, 2, 3, 4], [1, 2, 4, 8])
+    assert np.isclose(result.statistic, 11.5 / np.sqrt(143.75))
+    assert result.statistic < 1
+
+
+def test_worked_example_migration_matrices_statistics():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'start': [1] * 4 + [2] * 4 + [3] * 4, 'end': [1, 1, 2, 3, 1, 2, 2, 3, 1, 2, 3, 3]})
+    result = m.migration_matrices_statistics(data, 'start', 'end')
+    assert np.allclose(result, [0.8, 0.8])
+
+
+def test_worked_example_conditional_information_entropy_ratio():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'rate': [0, 1], 'n': [10, 10]})
+    result = m.conditional_information_entropy_ratio(data, 'rate', 'n')
+    assert np.isclose(result, 1)
+
+
+def test_worked_example_kullback_leibler_dist():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'rate': [0, 1], 'n': [10, 10]})
+    result = m.kullback_leibler_dist(data, 'rate', 'n')
+    assert np.isclose(result, np.log(2))
+
+
+def test_worked_example_loss_shortfall():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'ead': [100, 200, 100, 100], 'predicted': [0.2, 0.4, 0.6, 0.8], 'realised': [0.1, 0.5, 0.4, 0.9], 'segment': ['A', 'A', 'B', 'B']})
+    result = m.loss_shortfall(data, 'ead', 'predicted', 'realised')
+    assert np.isclose(result, 0)
+
+
+def test_worked_example_mean_absolute_deviation():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'ead': [100, 200, 100, 100], 'predicted': [0.2, 0.4, 0.6, 0.8], 'realised': [0.1, 0.5, 0.4, 0.9], 'segment': ['A', 'A', 'B', 'B']})
+    result = m.mean_absolute_deviation(data, 'ead', 'predicted', 'realised')
+    assert np.isclose(result, 0.12)
+
+
+def test_worked_example_elbe_t_test():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'ead': [100, 200, 100, 100], 'predicted': [0.2, 0.4, 0.6, 0.8], 'realised': [0.1, 0.5, 0.4, 0.9], 'segment': ['A', 'A', 'B', 'B']})
+    result = m.elbe_t_test(data, 'realised', 'predicted')
+    assert np.isclose(result.lgd_mean.iloc[0], 0.475)
+    assert result.t_stat.iloc[0] < 0
+    assert 0 < result.p_value.iloc[0] < 1
+
+
+def test_worked_example_normal_test():
+    """Preserve the numerical expectations from the published worked example."""
+    result = m.normal_test([0.1, 0.1, 0.1, 0.1], [0.1, 0.2, 0.3, 0.4])
+    assert np.isclose(result.t_stat.iloc[0], 0.6 / np.sqrt(1 / 15))
+    assert bool(result.outcome.iloc[0])
+
+
+def test_worked_example_redelmeier_test():
+    """Preserve the numerical expectations from the published worked example."""
+    data = pd.DataFrame({'y': [0, 1, 1, 0], 'p1': [0.1, 0.4, 0.7, 0.3], 'p2': [0.2, 0.6, 0.6, 0.1]})
+    result = m.redelmeier_test(data, default_flag='y', first_pd='p1', second_pd='p2')
+    assert np.isclose(result[0], 0.18 / np.sqrt(0.0798))
+    assert 0 < result[1] < 1

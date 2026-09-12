@@ -4,7 +4,7 @@ These pages explain all 29 methods: their arguments, return values, formulas,
 assumptions, examples and statistical sources. Read them directly on GitHub.
 
 See the [package README](../README.md) to install and get started, the
-[notebook](../examples.ipynb) for executable examples.
+[notebook](examples.ipynb) for executable examples.
 
 ### Calibration
 
