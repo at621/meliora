@@ -3,7 +3,7 @@
 These pages explain all 29 methods: their arguments, return values, formulas,
 assumptions, examples and statistical sources. Read them directly on GitHub.
 
-See the [package README](../README.md) to install and get started, the
+See the [package README](../README.md) to clone the repository and get started, the
 [original notebook](examples/examples.ipynb) for short executable examples, and the
 [detailed case-study notebook](examples/detailed_examples.ipynb) for larger
 synthetic portfolios, a graph for every method, and interpretations of what each
