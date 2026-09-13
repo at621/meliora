@@ -19,8 +19,8 @@ Nonempty current portfolio. Its size may differ from data1; not modified.
 
 **`ratings`** (str)
 
-Name of the non-missing rating-grade column. Calibration grouping uses observed
-grades only.
+Non-missing rating-grade column. The declared or inferred grade universe,
+including empty grades, defines K.
 
 **`alpha_level`** (float, default 0.05)
 

@@ -23,13 +23,13 @@ Shared pre-defined bin column name; uses the union of observed bins.
 
 **`expected`** (scalar, optional)
 
-Reference sample label, specified together with actual. Defaults to the first sorted
-sample label.
+Reference sample label, specified together with actual. May be omitted only for
+an ordered categorical period; then the first observed category is the reference.
 
 **`actual`** (scalar, optional)
 
-Comparison sample label, distinct from expected. Defaults to the second sorted
-label.
+Comparison sample label, distinct from expected. For an ordered categorical
+period, defaults to the second observed category; unused categories are ignored.
 
 **`smoothing`** (float, default 0.5)
 
@@ -50,8 +50,8 @@ otherwise use the observed union. Must include every observed bin.
 ## Formula, assumptions and interpretation
 
 Require exactly two samples and shared pre-defined bins. Add smoothing per sample/bin
-cell, normalize samples to shares E,A, then PSI=sum((A-E)\*log(A/E)). Defaults choose
-expected/actual in natural or categorical order; explicit labels are clearer. Default
+cell, normalize samples to shares E,A, then PSI=sum((A-E)\*log(A/E)). Supply both
+sample labels unless an ordered categorical period defines their order. Default
 smoothing=0.5; zero requires positive cells. PSI is symmetric and descriptive, not a
 significance test. Binning and smoothing change the value; no universal cutoffs are
 imposed.

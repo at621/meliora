@@ -5,7 +5,7 @@ Arrays are paired by position; caller DataFrames are never mutated. See each
 function for its statistical convention.
 """
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 
 import numpy as np
 import pandas as pd
@@ -325,6 +325,7 @@ def _calibration(data, ratings, default_flag, predicted_pd):
             "Actual Default Rate": ("y", "mean"),
         }
     )
+    result["Defaults"] = result["Defaults"].astype(np.int64)
     return result.rename_axis("Rating class").reset_index()
 
 
@@ -469,8 +470,8 @@ def herfindahl_test(data1, ratings, *, rating_order=None):
         Nonempty initial/single-period portfolio with a non-missing grade column; not
         modified.
     ratings : str
-        Name of the non-missing rating-grade column. Calibration grouping uses observed
-        grades only.
+        Non-missing rating-grade column. The declared or inferred grade universe,
+        including empty grades, defines K.
     rating_order : sequence, optional
         Unique complete grade labels from lowest to highest; unobserved grades are retained.
         Otherwise use consistent ordered categorical metadata, then naturally sort the
@@ -524,8 +525,8 @@ def herfindahl_multiple_period_test(data1, data2, ratings, alpha_level=0.05, *, 
     data2 : pandas.DataFrame
         Nonempty current portfolio. Its size may differ from data1; not modified.
     ratings : str
-        Name of the non-missing rating-grade column. Calibration grouping uses observed
-        grades only.
+        Non-missing rating-grade column. The declared or inferred grade universe,
+        including empty grades, defines K.
     alpha_level : float, default 0.05
         Tail threshold strictly between 0 and 1. Reject for a strictly smaller documented
         tail probability.
@@ -1259,9 +1260,10 @@ def information_value(df, feature, target, *, smoothing=0.5, bin_order=None):
     >>> assert np.allclose(result[0][["good_share", "bad_share"]].sum(), 1)
     """
     _validate_frame(df, [feature, target])
-    _validate_binary(df[target], target, both=True)
+    outcomes = _validate_binary(df[target], target, both=True).astype(np.int64)
     smooth = _validate_smoothing(smoothing)
-    counts = pd.crosstab(df[feature], df[target]).reindex(columns=[0, 1], fill_value=0).astype(float)
+    # Use the validated values positionally, retaining the feature's index/name.
+    counts = pd.crosstab(df[feature], outcomes).reindex(columns=[0, 1], fill_value=0).astype(np.int64)
     if bin_order is not None:
         labels = _rating_order(df[feature], order=bin_order)
         counts = counts.reindex(index=labels, fill_value=0)
@@ -1429,7 +1431,9 @@ def _migration(data, initial, final, rating_order):
     )
 
 
-def migration_matrix_stability(df, initial_ratings_col, final_ratings_col, *, rating_order=None):
+def migration_matrix_stability(
+    df, initial_ratings_col, final_ratings_col, *, rating_order=None, initial_counts=None
+):
     """Calculate ECB adjacent-cell migration z statistics and their normal CDFs.
 
     Parameters
@@ -1445,6 +1449,13 @@ def migration_matrix_stability(df, initial_ratings_col, final_ratings_col, *, ra
         Unique complete grade labels from lowest to highest; unobserved grades are retained.
         Otherwise use consistent ordered categorical metadata, then naturally sort the
         observed union. Specify business order explicitly.
+    initial_counts : mapping or pandas.Series, optional
+        Nonnegative integer counts keyed by every grade in the resolved rating order,
+        including empty grades. Counts refer to the eligible cohort at the start of
+        the period, including subsequent defaults, exits and model transfers. Each
+        count must be at least its matched performing-row total. If omitted, row
+        totals are used: with departures this is conditional on remaining rated,
+        rather than the full-cohort ECB calculation.
 
     Returns
     -------
@@ -1454,7 +1465,7 @@ def migration_matrix_stability(df, initial_ratings_col, final_ratings_col, *, ra
     Raises
     ------
     ValueError
-        Invalid grade columns or rating order.
+        Invalid grade columns, rating order, or initial cohort counts.
     TypeError
         If a required table is not a pandas DataFrame.
 
@@ -1465,6 +1476,10 @@ def migration_matrix_stability(df, initial_ratings_col, final_ratings_col, *, ra
     Small CDFs indicate violations of decreasing off-diagonal mass. These are asymptotic
     multinomial comparisons, not time-series equality tests. Retain empty grades. NaN means
     undefined, not passed. Cell probabilities are not multiplicity-adjusted.
+    For ECB reporting, divide performing destination counts by initial_counts.
+    Non-performing destinations contribute to those totals but are not ordinal
+    grades and must not be added to rating_order. Omitting initial_counts gives
+    the ECB denominator only when all initial customers remain in the table.
 
     References
     ----------
@@ -1481,9 +1496,25 @@ def migration_matrix_stability(df, initial_ratings_col, final_ratings_col, *, ra
     >>> assert np.isnan(np.diag(result[0])).all()
     """
     counts = _migration(df, initial_ratings_col, final_ratings_col, rating_order)
+    totals = counts.sum(axis=1).to_numpy()
+    if initial_counts is not None:
+        if not isinstance(initial_counts, (Mapping, pd.Series)):
+            raise ValueError("initial_counts must be a mapping or Series keyed by grade")
+        initial = pd.Series(initial_counts)
+        if (
+            initial.index.has_duplicates
+            or initial.index.isna().any()
+            or len(initial) != len(counts)
+            or not counts.index.isin(initial.index).all()
+        ):
+            raise ValueError("initial_counts must contain each rating grade exactly once")
+        initial_values = _validate_vector(initial.reindex(counts.index), "initial_counts")
+        if (initial_values < totals).any() or (initial_values != np.floor(initial_values)).any():
+            raise ValueError("initial_counts must be integer counts at least as large as matched row totals")
+        totals = initial_values
     z = np.full(counts.shape, np.nan)
     for i, row in enumerate(counts.to_numpy()):
-        n = row.sum()
+        n = totals[i]
         if n == 0:
             continue
         p = row / n
@@ -1515,11 +1546,11 @@ def population_stability_index(
     variable : str
         Shared pre-defined bin column name; uses the union of observed bins.
     expected : scalar, optional
-        Reference sample label, specified together with actual. Defaults to the first sorted
-        sample label.
+        Reference sample label, specified together with actual. May be omitted only for
+        an ordered categorical period; then the first observed category is the reference.
     actual : scalar, optional
-        Comparison sample label, distinct from expected. Defaults to the second sorted
-        label.
+        Comparison sample label, distinct from expected. For an ordered categorical
+        period, defaults to the second observed category; unused categories are ignored.
     smoothing : float, default 0.5
         Finite nonnegative pseudo-count added to every contingency cell. Zero requires
         positive raw cells.
@@ -1544,8 +1575,8 @@ def population_stability_index(
     Notes
     -----
     Require exactly two samples and shared pre-defined bins. Add smoothing per sample/bin
-    cell, normalize samples to shares E,A, then PSI=sum((A-E)*log(A/E)). Defaults choose
-    expected/actual in natural or categorical order; explicit labels are clearer. Default
+    cell, normalize samples to shares E,A, then PSI=sum((A-E)*log(A/E)). Supply both
+    sample labels unless an ordered categorical period defines their order. Default
     smoothing=0.5; zero requires positive cells. PSI is symmetric and descriptive, not a
     significance test. Binning and smoothing change the value; no universal cutoffs are
     imposed.
@@ -1570,11 +1601,14 @@ def population_stability_index(
     """
     _validate_frame(data, [bin_flag, variable])
     smooth = _validate_smoothing(smoothing)
-    labels = _rating_order(data[bin_flag])
+    labels = list(pd.unique(data[bin_flag]))
     if len(labels) != 2:
         raise ValueError("PSI requires exactly two sample labels")
     if expected is None and actual is None:
-        expected, actual = labels
+        period = data[bin_flag]
+        if not isinstance(period.dtype, pd.CategoricalDtype) or not period.cat.ordered:
+            raise ValueError("Specify expected and actual sample labels, or use an ordered categorical period")
+        expected, actual = [label for label in period.cat.categories if label in labels]
     if expected not in labels or actual not in labels or expected == actual:
         raise ValueError("expected and actual must identify the two distinct sample labels")
     counts = pd.crosstab(data[variable], data[bin_flag]).reindex(columns=[expected, actual]).astype(float)
@@ -1713,7 +1747,8 @@ def somersd(array_1, array_2=None, alternative="two-sided"):
     >>> assert np.isclose(result.statistic, .5)
     """
     if array_2 is None:
-        table = np.asarray(array_1, dtype=float)
+        raw = np.asarray(array_1)
+        table = _validate_vector(raw.ravel(), "contingency table").reshape(raw.shape)
         if (
             table.ndim != 2
             or min(table.shape) < 2

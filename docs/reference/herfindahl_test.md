@@ -15,8 +15,8 @@ modified.
 
 **`ratings`** (str)
 
-Name of the non-missing rating-grade column. Calibration grouping uses observed
-grades only.
+Non-missing rating-grade column. The declared or inferred grade universe,
+including empty grades, defines K.
 
 **`rating_order`** (sequence, optional)
 

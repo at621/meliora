@@ -304,13 +304,17 @@ def test_population_stability_index():
     )
     np.testing.assert_allclose(table[["expected", "actual"]], [[0.75, 0.25], [0.25, 0.75]])
     assert psi == pytest.approx(math.log(3))
-    assert m.population_stability_index(data, "period", "bin", smoothing=0)[1] == pytest.approx(psi)
+    reverse, reverse_psi = m.population_stability_index(
+        data, "period", "bin", expected="new", actual="old", smoothing=0
+    )
+    assert reverse_psi == pytest.approx(psi)
+    np.testing.assert_allclose(reverse[["expected", "actual"]], [[0.25, 0.75], [0.75, 0.25]])
     separated = pd.DataFrame({"period": ["old", "new"], "bin": ["A", "B"]})
-    result, value = m.population_stability_index(separated, "period", "bin")
+    result, value = m.population_stability_index(separated, "period", "bin", expected="old", actual="new")
     assert np.isfinite(result.to_numpy()).all()
     assert value == pytest.approx(math.log(3))
     with pytest.raises(ValueError, match="smoothing"):
-        m.population_stability_index(separated, "period", "bin", smoothing=0)
+        m.population_stability_index(separated, "period", "bin", expected="old", actual="new", smoothing=0)
     with pytest.raises(ValueError, match="exactly two"):
         m.population_stability_index(data.iloc[:4], "period", "bin")
     for kwargs in [

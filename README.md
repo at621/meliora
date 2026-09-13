@@ -113,4 +113,11 @@ The notebooks' setup cells locate Meliora in the cloned repository. Run the setu
 cells once, then run any numbered example, or restart the kernel and run all cells
 in order.
 
+For PSI, pass `expected` and `actual` explicitly unless the period column is an
+ordered categorical. Unused period categories are ignored; ordinary string labels
+are not sorted into an implied chronology. For ECB migration shape checks with
+defaults, exits or transfers, pass `initial_counts` keyed by grade so the original
+cohort remains the probability and variance denominator. Omitting it uses the
+matched performing rows and is conditional on remaining rated when customers leave.
+
 License: [MIT](LICENSE).

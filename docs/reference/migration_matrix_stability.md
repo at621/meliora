@@ -1,9 +1,9 @@
-# Migration matrix stability
+# Adjacent-cell shape checks
 
 Calculate ECB adjacent-cell migration z statistics and their normal CDFs.
 
 ```python
-meliora.migration_matrix_stability(df, initial_ratings_col, final_ratings_col, *, rating_order=None)
+meliora.migration_matrix_stability(df, initial_ratings_col, final_ratings_col, *, rating_order=None, initial_counts=None)
 ```
 
 ## Parameters
@@ -27,6 +27,15 @@ Unique complete grade labels from lowest to highest; unobserved grades are retai
 Otherwise use consistent ordered categorical metadata, then naturally sort the
 observed union. Specify business order explicitly.
 
+**`initial_counts`** (mapping or pandas.Series, optional)
+
+Nonnegative integer counts keyed by every grade in the resolved rating order,
+including empty grades. Counts refer to the eligible cohort at the start of
+the period, including subsequent defaults, exits and model transfers. Each
+count must be at least its matched performing-row total. If omitted, row
+totals are used: with departures this is conditional on remaining rated,
+rather than the full-cohort ECB calculation.
+
 ## Returns
 
 **`tuple of pandas.DataFrame`**
@@ -40,6 +49,10 @@ z=(n-f)/sqrt((f\*(1-f)+n\*(1-n)+2\*f\*n)/N\_i). Return Phi(z), as in ECB 2019 in
 Small CDFs indicate violations of decreasing off-diagonal mass. These are asymptotic
 multinomial comparisons, not time-series equality tests. Retain empty grades. NaN means
 undefined, not passed. Cell probabilities are not multiplicity-adjusted.
+For ECB reporting, divide performing destination counts by initial_counts.
+Non-performing destinations contribute to those totals but are not ordinal
+grades and must not be added to rating_order. Omitting initial_counts gives
+the ECB denominator only when all initial customers remain in the table.
 
 ## Example
 
@@ -59,7 +72,7 @@ Cell (1,2) compares 2/4 on the diagonal against 1/4 nearby. Cell (1,3) has equal
 
 **`ValueError`**
 
-Invalid grade columns or rating order.
+Invalid grade columns, rating order, or initial cohort counts.
 
 **`TypeError`**
 

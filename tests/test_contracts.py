@@ -31,7 +31,7 @@ CASES = (
         ("information_value", [CREDIT, "g", "y"], {}),
         ("lgd_t_test", [LOSS, "y", "p"], {}),
         ("migration_matrix_stability", [MIGRATION, "a", "b"], {}),
-        ("population_stability_index", [PSI, "sample", "bin"], {}),
+        ("population_stability_index", [PSI, "sample", "bin"], {"expected": "old", "actual": "new"}),
         ("kendall_tau", [[1, 2, 3, 4], [1, 3, 2, 4]], {}),
         ("somersd", [[1, 2, 3, 4], [1, 3, 2, 4]], {}),
         ("spearman_correlation", [[1, 2, 3, 4], [1, 3, 2, 4]], {}),
