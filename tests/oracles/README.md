@@ -32,7 +32,8 @@ after the oracle ran.
 python tests/oracles/run_oracles.py data        # datasets and python/results.json
 python tests/oracles/run_oracles.py r matlab    # live R and MATLAB runs
 MELIORA_ORACLES=r,matlab python -m pytest tests/test_cross_language.py
-python tests/oracles/report.py                  # rewrite RESULTS.md
+python tests/oracles/report.py                  # rewrite RESULTS.md and RESULTS.csv
+python tests/oracles/run_oracles.py restamp     # refresh stamps after edits that cannot change results
 ```
 
 R is found through `MELIORA_RSCRIPT`, the PATH or `C:/Program Files/R`; it

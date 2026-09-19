@@ -168,10 +168,11 @@ def main() -> None:
     for number, name, case, field, cells, _ in rows:
         lines.append(f"| {number} | {name} | `{case}` | `{field}` | " + " | ".join(cells) + " |")
     lines.append("")
-    (HERE / "RESULTS.md").write_text("\n".join(lines), encoding="utf-8")
+    with (HERE / "RESULTS.md").open("w", encoding="utf-8", newline="\n") as handle:
+        handle.write("\n".join(lines))
 
-    with (HERE / "RESULTS.csv").open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.writer(handle)
+    with (HERE / "RESULTS.csv").open("w", encoding="utf-8", newline="\n") as handle:
+        writer = csv.writer(handle, lineterminator="\n")
         writer.writerow(["number", "method", "case", "field", "python", "r", "matlab", "sas"])
         for number, name, case, field, _, raws in rows:
             writer.writerow([number, name, case, field, *raws])

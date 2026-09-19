@@ -46,11 +46,17 @@ ZERO_TOL = 1e-14
 # (language, case glob, field glob) -> why the oracle legitimately differs.
 # Statistics agree in every case; the entries below are p-value algorithms.
 KNOWN_DIVERGENCE: dict[tuple[str, str, str], str] = {
-    ("r", "ks_small_ties", "pvalue"): "R uses the asymptotic distribution with ties; SciPy uses the exact tie-free distribution",
+    ("r", "ks_small_ties", "pvalue"): (
+        "R uses the asymptotic distribution with ties; SciPy uses the exact tie-free distribution"
+    ),
     ("matlab", "ks_*", "pvalue"): "kstest2 only offers the asymptotic p-value; SciPy uses the exact distribution",
-    ("matlab", "spearman_small", "p_value"): "MATLAB uses the exact permutation distribution for n=4; SciPy uses the t approximation",
+    ("matlab", "spearman_small", "p_value"): (
+        "MATLAB uses the exact permutation distribution for n=4; SciPy uses the t approximation"
+    ),
     ("sas", "ks_*", "pvalue"): "PROC NPAR1WAY reports the asymptotic p-value; SciPy uses the exact distribution",
-    ("sas", "kendall_small", "p_value"): "PROC CORR uses the asymptotic Kendall p-value; SciPy is exact for n<50 without ties",
+    ("sas", "kendall_small", "p_value"): (
+        "PROC CORR uses the asymptotic Kendall p-value; SciPy is exact for n<50 without ties"
+    ),
 }
 
 EXPECTED = cases.compute_all()

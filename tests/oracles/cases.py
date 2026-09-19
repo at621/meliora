@@ -253,7 +253,8 @@ def _(d):
 
 
 def _iv(table, iv):
-    out = _by_label(table, {"good": "good", "bad": "bad", "good_share": "good_share", "bad_share": "bad_share", "woe": "WoE"})
+    columns = {"good": "good", "bad": "bad", "good_share": "good_share", "bad_share": "bad_share", "woe": "WoE"}
+    out = _by_label(table, columns)
     out["iv"] = _py(iv)
     return out
 
@@ -408,7 +409,12 @@ def _(d):
 
 def _normal(frame):
     row = m.normal_test(frame.predicted, frame.realised).iloc[0]
-    return {"estimate": _py(row.estimate), "z": _py(row.t_stat), "p_value": _py(row.p_value), "reject": _py(row.outcome)}
+    return {
+        "estimate": _py(row.estimate),
+        "z": _py(row.t_stat),
+        "p_value": _py(row.p_value),
+        "reject": _py(row.outcome),
+    }
 
 
 @case("normal_test_small")
@@ -545,7 +551,8 @@ def _psi(table, psi):
 
 @case("psi_small")
 def _(d):
-    return _psi(*m.population_stability_index(d("psi_small"), "period", "bin", expected="old", actual="new", smoothing=0))
+    frame = d("psi_small")
+    return _psi(*m.population_stability_index(frame, "period", "bin", expected="old", actual="new", smoothing=0))
 
 
 @case("psi_declared")
@@ -698,7 +705,11 @@ def compute_all(data_dir: Path = DATA_DIR) -> dict[str, dict[str, object]]:
 
 
 def to_records(results: dict[str, dict[str, object]]) -> list[dict]:
-    return [{"case": case, "field": field, "value": value} for case, fields in results.items() for field, value in fields.items()]
+    return [
+        {"case": case, "field": field, "value": value}
+        for case, fields in results.items()
+        for field, value in fields.items()
+    ]
 
 
 def from_records(records: list[dict]) -> dict[str, dict[str, object]]:
@@ -708,8 +719,13 @@ def from_records(records: list[dict]) -> dict[str, dict[str, object]]:
     return out
 
 
+def _normalised(path: Path) -> bytes:
+    """File bytes with CRLF folded to LF, so checkouts on any platform hash alike."""
+    return path.read_bytes().replace(b"\r\n", b"\n")
+
+
 def file_hash(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    return hashlib.sha256(_normalised(path)).hexdigest()
 
 
 def data_hash(data_dir: Path = DATA_DIR) -> str:
@@ -717,7 +733,7 @@ def data_hash(data_dir: Path = DATA_DIR) -> str:
     digest = hashlib.sha256()
     for path in sorted(data_dir.glob("*.csv")):
         digest.update(path.name.encode())
-        digest.update(path.read_bytes())
+        digest.update(_normalised(path))
     return digest.hexdigest()
 
 
@@ -746,5 +762,7 @@ if __name__ == "__main__":
     results = compute_all()
     target = HERE / "python" / "results.json"
     target.parent.mkdir(exist_ok=True)
-    target.write_text(json.dumps({"meta": python_meta(), "results": to_records(results)}, indent=1), encoding="utf-8")
+    with target.open("w", encoding="utf-8", newline="\n") as handle:
+        json.dump({"meta": python_meta(), "results": to_records(results)}, handle, indent=1)
+        handle.write("\n")
     print(f"{len(results)} cases, {sum(len(v) for v in results.values())} fields -> {target}")
