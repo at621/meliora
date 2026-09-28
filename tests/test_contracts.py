@@ -8,6 +8,7 @@ import pytest
 
 import meliora as m
 from meliora.core import _validate_vector
+from extension_cases import EXTENSION_CASES, OPTIONAL
 
 CREDIT = pd.DataFrame({"g": ["A"] * 4 + ["B"] * 4, "y": [0, 0, 1, 1] * 2, "p": [0.2] * 4 + [0.6] * 4})
 LOSS = pd.DataFrame({"w": [1, 2, 3], "p": [0.1, 0.4, 0.8], "y": [0.2, 0.3, 0.9]})
@@ -50,12 +51,15 @@ CASES = (
         ),
     ]
 )
+CASES += EXTENSION_CASES
 
 
 @pytest.mark.parametrize("name,args,kwargs", CASES, ids=[c[0] for c in CASES])
 def test_no_input_mutation(name, args, kwargs):
     """Every public function must leave caller-owned arrays and tables unchanged."""
     local = deepcopy(args)
+    if name in OPTIONAL:
+        pytest.importorskip('arch' if name == 'phillips_perron_test' else 'statsmodels')
     getattr(m, name)(*local, **kwargs)
     for before, after in zip(args, local, strict=True):
         if isinstance(before, pd.DataFrame):
@@ -74,7 +78,12 @@ def test_invalid_data_is_rejected(name, args, kwargs, failure):
         if failure == "missing":
             local[0].iloc[0, :] = None
     else:
-        local[0] = [] if failure == "empty" else [np.nan, *local[0][1:]]
+        if failure == "empty":
+            local[0] = []
+        elif isinstance(local[0][0], list):
+            local[0][0][0] = np.nan
+        else:
+            local[0] = [np.nan, *local[0][1:]]
     with pytest.raises(ValueError):
         getattr(m, name)(*local, **kwargs)
 

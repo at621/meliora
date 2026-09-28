@@ -14,3 +14,7 @@ build/
 dist/
 *.egg-info/
 .DS_Store
+.test-deps/
+.venv-compat/
+.r-libs/
+/archive/

@@ -10,6 +10,7 @@ requires-python = ">=3.11"
 dependencies = ["numpy>=1.26", "pandas>=2.1", "scipy>=1.11", "scikit-learn>=1.3"]
 
 [project.optional-dependencies]
+timeseries = ["statsmodels>=0.14.4,<0.15", "arch>=7.2,<8"]
 test = ["pytest>=8,<10"]
 notebook = ["matplotlib>=3.8", "jupyterlab>=4,<5", "nbclient>=0.10,<1", "nbconvert>=7,<8"]
 
@@ -24,4 +25,5 @@ version = {attr = "meliora.__version__"}
 testpaths = ["tests"]
 pythonpath = ["."]
 addopts = "-ra --strict-markers"
+markers = ["slow: seeded Monte Carlo size and power studies (opt in with MELIORA_SLOW=1)"]
 filterwarnings = ["error"]

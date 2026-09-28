@@ -1,0 +1,11 @@
+{
+  "generator": "R, independent of Meliora and Python statistical backends",
+  "files": {
+    "regression.csv": "1ae75dfd488642dc9eeb88da299f68cc7bf47acd08aeb4c7004e11f84f165be5",
+    "walk.csv": "94e4414269286fd50fcefc8dd94fe819bab92b764bcde3a0d290d1c2969cdaec",
+    "oracle.R": "c904af0fbcc80a976942a4ebf24dac34ba91e3024f087d88ae7c7347f143e96f",
+    "r_results.csv": "f32d479898368b34f7a8aaab954e71275216bb583e1728d1f4e01290b5dd2424",
+    "r_session.txt": "6371bcc0b432c9038f88ba3e07b47ee466802c8980a330b38cc2568b9c8cceb1",
+    "regenerate.py": "269151d73f10308d1963c3bca95629997768809e0a90b8cea4a5909513f47c77"
+  }
+}
